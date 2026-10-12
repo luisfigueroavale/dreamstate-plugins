@@ -10,7 +10,7 @@
       "name": "dreamstate",
       "description": "Dreamstate for AI agents: build workbooks of companies and people, run LinkedIn and email sequences, answer replies, post to LinkedIn and X, and manage your CRM from your coding agent.",
       "category": "productivity",
-      "source": "./plugins/dreamstate"
+      "source": "./"
     }
   ]
 }

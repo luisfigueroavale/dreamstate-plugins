@@ -1,12 +1,13 @@
 {
   "name": "dreamstate",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Dreamstate for AI agents: build workbooks of companies and people, run LinkedIn and email sequences, answer replies, post to LinkedIn and X, and manage your CRM from your coding agent.",
   "author": {
     "name": "Dreamstate",
     "url": "https://trydreamstate.com"
   },
   "homepage": "https://trydreamstate.com",
+  "repository": "https://github.com/luisfigueroavale/dreamstate-plugins",
   "license": "MIT",
   "keywords": [
     "dreamstate",
