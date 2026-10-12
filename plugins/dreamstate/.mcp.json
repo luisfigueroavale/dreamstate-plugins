@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "dreamstate": {
+      "type": "http",
+      "url": "https://mcp.trydreamstate.com"
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "dreamstate",
+  "version": "1.3.0",
+  "description": "Dreamstate for AI agents: build workbooks of companies and people, run LinkedIn and email sequences, answer replies, post to LinkedIn and X, and manage your CRM from your coding agent.",
+  "author": {
+    "name": "Dreamstate",
+    "url": "https://trydreamstate.com"
+  },
+  "homepage": "https://trydreamstate.com",
+  "license": "MIT",
+  "keywords": [
+    "dreamstate",
+    "sales",
+    "outreach",
+    "linkedin",
+    "crm",
+    "lead-generation",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Dreamstate",
+    "shortDescription": "Sales and marketing workspace for agents",
+    "longDescription": "Dreamstate for AI agents: build workbooks of companies and people, run LinkedIn and email sequences, answer replies, post to LinkedIn and X, and manage your CRM from your coding agent.",
+    "developerName": "Dreamstate",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://trydreamstate.com",
+    "privacyPolicyURL": "https://trydreamstate.com/privacy",
+    "termsOfServiceURL": "https://trydreamstate.com/terms",
+    "defaultPrompt": [
+      "Get me started with Dreamstate",
+      "Build a list of companies hiring SDRs",
+      "What should I do next in Dreamstate"
+    ]
+  }
+}
