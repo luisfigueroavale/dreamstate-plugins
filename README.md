@@ -16,7 +16,8 @@ Or install into one agent:
 
 ```sh
 # Claude Code
-claude plugin install dreamstate --marketplace luisfigueroavale/dreamstate-plugins
+claude plugin marketplace add luisfigueroavale/dreamstate-plugins
+claude plugin install dreamstate@dreamstate
 
 # Codex
 codex plugin marketplace add luisfigueroavale/dreamstate-plugins
@@ -24,7 +25,7 @@ codex plugin add dreamstate@dreamstate
 
 # Grok Build
 grok plugin marketplace add luisfigueroavale/dreamstate-plugins
-grok plugin install dreamstate@dreamstate
+grok plugin install dreamstate@dreamstate-plugins
 ```
 
 ## What is inside
