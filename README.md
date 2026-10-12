@@ -24,15 +24,14 @@ codex plugin marketplace add luisfigueroavale/dreamstate-plugins
 codex plugin add dreamstate@dreamstate
 
 # Grok Build
-grok plugin marketplace add luisfigueroavale/dreamstate-plugins
-grok plugin install dreamstate@dreamstate-plugins
+grok plugin install luisfigueroavale/dreamstate-plugins
 ```
 
 ## What is inside
 
-- `plugins/dreamstate/.mcp.json`: the hosted MCP server at `https://mcp.trydreamstate.com` (OAuth).
-- `plugins/dreamstate/skills/`: Dreamstate's skills, for example `dreamstate:list-building`, `dreamstate:outreach` and `dreamstate:first-win`.
-- Marketplace files for each agent: `.claude-plugin/`, `.agents/plugins/` and `.grok-plugin/`.
+- `.mcp.json`: the one network endpoint, the hosted Dreamstate MCP server at `https://mcp.trydreamstate.com`. You sign in with OAuth, and the plugin stores no credentials.
+- `skills/`: Dreamstate's skills, for example `dreamstate:list-building`, `dreamstate:outreach` and `dreamstate:first-win`. These are plain Markdown, with no scripts and no hooks.
+- Plugin manifests for each agent (`.claude-plugin/`, `.codex-plugin/`) and marketplace files (`.claude-plugin/`, `.agents/plugins/`, `.grok-plugin/`).
 
 This repository is generated from the Dreamstate CLI build. Do not edit it by hand.
 
