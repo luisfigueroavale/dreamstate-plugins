@@ -3,7 +3,7 @@ name: diagnostics
 description: "Answer one operational question with evidence, such as where a cell value came from or why it is empty, which runs failed and which are safe to retry, why a sequence has not sent, or where credits went and how to spend less. Use it when something in a worksheet, sequence or workflow looks wrong, stuck, missing or expensive. It reads before it changes anything. It does not redesign lists, sequences or workflows, or tidy worksheet structure (worksheet-tidy does)."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` is a param of the external-send sequence capabilities (`sequence.sequences.activate_audience`, `sequence.sequences.resume`, and the rest of that family), sent inside `params`, not a gating input of `tools_run`. The paid-run consent rule is one sentence in the MCP server instructions, rendered from consentRule.json and PAID_RUN_APPROVAL_THRESHOLDS: rows, dollars, credits, and the conversion. If the server asks you to sign in, approve it in the browser.
 
 # Diagnostics
 
@@ -70,3 +70,5 @@ Search the tool for the read you need. The search returns runnable schemas for i
 ## Check it works
 
 Done means checked, not built. Before you report, read back everything you made or changed, and run, test or preview it where that is offered; publish or send only when the user asked. An empty, failed or wrong result means an input or setting is wrong: find which from the error or the output, correct it and check again, until it is right or a real blocker stops it. Report what you checked and what it showed.
+
+Paid and outward runs follow the paid-run consent rule.

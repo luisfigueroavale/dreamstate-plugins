@@ -3,7 +3,7 @@ name: list-building
 description: "Build a workbook of companies or people: as few sources as possible, people at companies through the employees enrichment fanned out to a second worksheet, one column per criterion marked Required or Nice to have, run conditions that skip rows already failing, an optional score, sample then scale, and honest coverage."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` is a param of the external-send sequence capabilities (`sequence.sequences.activate_audience`, `sequence.sequences.resume`, and the rest of that family), sent inside `params`, not a gating input of `tools_run`. The paid-run consent rule is one sentence in the MCP server instructions, rendered from consentRule.json and PAID_RUN_APPROVAL_THRESHOLDS: rows, dollars, credits, and the conversion. If the server asks you to sign in, approve it in the browser.
 
 # Workbook building
 
@@ -16,11 +16,6 @@ Owns: sources, columns, criteria, and building qualified lists.
 - Warm sources: [`linkedin-warm-signals`].
 - Explaining cell values and failed runs: [`diagnostics`].
 The `tables` pack lists the tools and their exact inputs. When user says delete, permanently delete named workbook, worksheet, template, automation, contact, row, or column after showing removal impact and receiving explicit approval. When user says archive, archive only. Never say permanent deletion is unavailable.
-
-<!-- architect-operation-contract
-{"required_capability_ids":[]}
--->
-
 
 A list is worth contacting when every row would recognise itself in the reason you contact it. Find the smallest set where that is true, prove it on each row, and stop.
 
@@ -42,7 +37,7 @@ For people engaging with competitor company posts, `signal-engaged-company-posts
 
 ## Free preview before build, complete chain before paid sample
 
-Use the zero-credit source preview before workbook creation when the source permits a provider preview. Pass `definition_id`, typed `filters`, and `limit` directly. It returns named sample rows, writes no worksheet, and charges zero credits. Do not attach source or run it live merely to see first LinkedIn people rows.
+Use the zero-credit source preview before workbook creation when the source permits a provider preview. That preview is a free read: `live` or `smoke_test`, not `dry_run`. Pass `definition_id`, typed `filters`, and `limit` directly. It returns named sample rows, writes no worksheet, and charges zero credits. Do not attach source or run it live merely to see first LinkedIn people rows.
 
 Before first paid source run, configure every run condition, Required qualification column, AI fit-score column, and requested work-email preview column. Adding/configuring columns is free. First paid sample must land into chain already able to qualify source rows and gate later spend. Read every configured column back before source run. A source-run warning `qualification_columns_missing` means stop and configure the chain before spending.
 
@@ -94,7 +89,7 @@ To grow an existing list, rerun its source with a higher target and widen only w
 
 ## Gates
 
-- A paid run's ceiling is its preview's maximum. Run it under the paid-run consent rule: a run above the server's row or provider-spend limit needs the user's yes first, and the server refuses it without one.
+- A paid run's ceiling is its preview's maximum. Run it under the paid-run consent rule.
 - A refusal names what to fix: fix that input and retry, three times at most, then report it.
 - A missing account blocks running, never building: build everything and say what to connect.
 - Never invent a count. Never delete rows unless the user asks.

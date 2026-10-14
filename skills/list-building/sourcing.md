@@ -24,8 +24,8 @@
 
 ## Targets and credits
 
-- Use the request's target. When none is given, free-preview first, then run attached source with `max_rows:25` and matching `max_credits`; ask how far to grow after reading those 25 rows.
+- Use the request's target. When none is given, free-preview first, then run the attached source with `max_rows` in the params of `tables.table_sources.run` (not on `tools_run`) and matching `max_credits`. When no target is given, start at `max_rows:25` and ask how far to grow after reading those 25 rows.
 - Over-provision about 1.4 times the target when later criteria drop rows.
-- `tables.sourcing.preview` accepts source definition plus filters directly. For LinkedIn people search, it returns up to ten named provider rows free, with no workbook, source attachment, or credits. Use it before paid sample. Preview maximum is ceiling; what was charged is read from finished run. Counts before run finishes are unknown, not zero.
+- `tables.sourcing.preview` is a free read. Use `live` or `smoke_test`, not `dry_run`. It accepts source definition plus filters directly. For LinkedIn people search, it returns up to ten named provider rows free, with no workbook, source attachment, or credits. Use it before a paid sample. Preview maximum is ceiling; what was charged is read from the finished run. Counts before the run finishes are unknown, not zero.
 - Run an enrichment on a few rows, read them, then continue the remaining rows instead of rerunning the sample.
 - A cell blocked by a daily limit is the workspace's pacing cap, not a defect.

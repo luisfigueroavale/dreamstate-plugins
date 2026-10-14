@@ -3,7 +3,7 @@ name: visibility
 description: "Get found by search engines and answer engines. Pick the query set, gather crawl, index, mention and citation evidence, fix pages, then measure the change."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` is a param of the external-send sequence capabilities (`sequence.sequences.activate_audience`, `sequence.sequences.resume`, and the rest of that family), sent inside `params`, not a gating input of `tools_run`. The paid-run consent rule is one sentence in the MCP server instructions, rendered from consentRule.json and PAID_RUN_APPROVAL_THRESHOLDS: rows, dollars, credits, and the conversion. If the server asks you to sign in, approve it in the browser.
 
 # Visibility
 
@@ -13,10 +13,6 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 - Drafting and publishing articles: [`writing`].
 - The `visibility` pack lists the tools and their exact inputs.
 
-<!-- architect-operation-contract
-{"required_capability_ids":[]}
--->
-
 Improve discoverability and qualified organic traffic in traditional search and in generative answer engines, as one practice. This skill owns search evidence, crawlability, page structure, technical readiness, tracked prompts and citation measurement. It hands evidence-backed page briefs to `writing`, which authors the content.
 
 ## Operating contract
@@ -25,7 +21,7 @@ Improve discoverability and qualified organic traffic in traditional search and 
 actions: []
 ```
 
-Read measured evidence, propose prioritized changes, and treat paid or asynchronous measurement as bounded work: show scope and cost, then run it under the paid-run consent rule: a run above the server's row or provider-spend limit needs the user's yes first. Before a sensitive change, show the evidence and the exact change. Knowledge owns business facts; writing owns content changes.
+Read measured evidence, propose prioritized changes, and treat paid or asynchronous measurement as bounded work: show scope and cost, then run it under the paid-run consent rule. Before a sensitive change, show the evidence and the exact change. Knowledge owns business facts; writing owns content changes.
 
 ## Loop
 

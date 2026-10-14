@@ -3,7 +3,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "^mcp__(?:plugin_dreamstate_dreamstate|dreamstate)__(?:whoami|packs_list|packs_get|packs_route|skills_list|skills_get|tools_search|tools_get|runs_list|runs_get|runs_events)$",
+        "matcher": "^mcp__(?:plugin_dreamstate_dreamstate|dreamstate)__(?:packs_get|packs_list|packs_route|runs_events|runs_get|runs_list|skills_get|skills_list|tools_get|tools_search|whoami)$",
         "hooks": [
           {
             "type": "command",

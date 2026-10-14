@@ -3,7 +3,7 @@ name: first-win
 description: "Run a short first session in a new workspace that confirms the user and workspace, builds or reads Company Context, creates one small sampled worksheet from the ideal customer, and suggests three next plays. Use it on a fresh workspace, when the user says \"get me started\", or when nothing has been built yet. It does not launch outreach, publish content or run anything at scale."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` is a param of the external-send sequence capabilities (`sequence.sequences.activate_audience`, `sequence.sequences.resume`, and the rest of that family), sent inside `params`, not a gating input of `tools_run`. The paid-run consent rule is one sentence in the MCP server instructions, rendered from consentRule.json and PAID_RUN_APPROVAL_THRESHOLDS: rows, dollars, credits, and the conversion. If the server asks you to sign in, approve it in the browser.
 
 # First Win
 
@@ -40,7 +40,7 @@ Search the tool for each task. The search returns runnable schemas for its top h
 
 - No sequence starts, no posts published, no emails or DMs sent in this session.
 - No contact data lookups yet. They come after the user agrees the sample is the right people.
-- Warm reads and free preview come before every cold source run. Keep paid work to one bounded sample, or zero credits when warm rows suffice. Show coverage, preview and estimate, then run the bounded sample from that preview. Anything larger follows the paid-run consent rule: the user's yes comes first when the server's row or provider-spend limit applies.
+- Warm reads and free preview come before every cold source run. Keep paid work to one bounded sample, or zero credits when warm rows suffice. Show coverage, preview and estimate, then run the bounded sample from that preview. Anything larger follows the paid-run consent rule.
 - A missing account never blocks building. Build the worksheet, then name the account to connect.
 - Do not start a play on the user's behalf. Recommend one and let them pick.
 

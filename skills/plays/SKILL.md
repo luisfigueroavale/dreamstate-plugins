@@ -3,7 +3,7 @@ name: plays
 description: "Recommend and run one named, proven go-to-market play when the user asks what to do next, picking by stage and what the workspace already has, and stating prerequisites, credit estimate and checkpoints before starting. Use it for \"what should I do\", \"how do I get leads\", \"help me start outbound or content\", or a weekly review. It does not replace the skills each step uses (knowledge, list-building, outreach, social, writing, visibility, workflows)."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` is a param of the external-send sequence capabilities (`sequence.sequences.activate_audience`, `sequence.sequences.resume`, and the rest of that family), sent inside `params`, not a gating input of `tools_run`. The paid-run consent rule is one sentence in the MCP server instructions, rendered from consentRule.json and PAID_RUN_APPROVAL_THRESHOLDS: rows, dollars, credits, and the conversion. If the server asks you to sign in, approve it in the browser.
 
 # Plays
 
@@ -17,7 +17,7 @@ A play is a proven order of ordinary steps aimed at one business outcome. It tea
 
 ## Backing packs
 
-A play has no pack of its own. It routes across packs: brain for Company Context, workbook for lists, sequence for outreach, inbox for replies, social for posts, visibility for analytics, workflows for automation. Use packs_list to see which are available, then packs_get only for the pack the current step needs.
+A play has no pack of its own. It routes across packs: `knowledge` for Company Context, `tables` for lists, `sequence` for outreach, `unibox` for replies, `social` for posts, `visibility` for analytics, `workflow` for automation. Use packs_list to see which are available, then packs_get only for the pack the current step needs.
 
 ## The invariant
 
@@ -26,7 +26,7 @@ A play has no pack of its own. It routes across packs: brain for Company Context
 ## Practice
 
 1. **Read the workspace.** Search first for three free, state-aware blueprint recommendations. That read uses registry requirements plus connected LinkedIn accounts, mailboxes, worksheets and credit posture. For one candidate, read the exact describe result the recommendation names next. Then read Company Context (Ideal Customer, Offer, Tone of Voice), connected LinkedIn and X accounts, existing worksheets, sequences, drafts and analytics freshness. Reuse what exists; never rebuild a worksheet or sequence that already does the job.
-2. **State the plan.** Steps in order, what each produces, the credit estimate for paid steps, and the checkpoints where the user sees real output. State the estimate, then proceed under the paid-run consent rule: a run above the server's row or provider-spend limit needs the user's yes first.
+2. **State the plan.** Steps in order, what each produces, the credit estimate for paid steps, and the checkpoints where the user sees real output. State the estimate, then proceed under the paid-run consent rule.
 3. **Run it step by step,** loading each step's skill with skills_get. Build everything buildable even when an account is missing, then name what to connect.
 4. **Show before it leaves.** Final copy of every message or post before anything sends or publishes, and say so before switching on any daily schedule.
 5. **Close with the leading metric** and when to check it.

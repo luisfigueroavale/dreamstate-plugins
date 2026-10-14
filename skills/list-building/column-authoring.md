@@ -8,7 +8,7 @@ A column answers one question about a row: what value it holds, what produces it
 - Reference source fields and columns exactly as the worksheet returns them after the source lands: `{{column_key}}` or `{{column_key.field}}`. Never guess a field name or add a copy column to reach one.
 - Send a declared output only for definitions that let you declare it; fixed-output enrichments return their own fields.
 - Save the run condition with the column (see the skill). Read the column back and confirm it.
-- Adding a column costs nothing. Run it on one row with a credit ceiling, read the cell, then run the rest with `max_rows` set, continuing while more rows remain.
+- Adding a column costs nothing. Run it on one row with a credit ceiling, read the cell, then run the rest with `max_rows` in the params of `tables.columns.run`, not on `tools_run`, continuing while more rows remain.
 - A refused column names the input to fix: fix it rather than switching to another kind of column.
 
 ## Criterion columns

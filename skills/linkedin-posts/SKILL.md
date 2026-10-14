@@ -3,7 +3,7 @@ name: linkedin-posts
 description: "Write and revise LinkedIn posts that earn the click and the reply: the 210 character hook, structure and formatting, length by post type (story, list, case study, belief disruption, short, paragraph), specificity, the CTA close, and phrases to avoid. Use it for the copy of any post going to LinkedIn. It does not cover scheduling, publishing or automations (social does)."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` is a param of the external-send sequence capabilities (`sequence.sequences.activate_audience`, `sequence.sequences.resume`, and the rest of that family), sent inside `params`, not a gating input of `tools_run`. The paid-run consent rule is one sentence in the MCP server instructions, rendered from consentRule.json and PAID_RUN_APPROVAL_THRESHOLDS: rows, dollars, credits, and the conversion. If the server asks you to sign in, approve it in the browser.
 
 # LinkedIn posts
 
@@ -77,3 +77,5 @@ Read the saved draft back before reporting it. Confirm it is under the channel l
 ## Find genre-matched examples
 
 For writing references, search Inspiration LinkedIn posts with an AI filter description, not keyword guesses or stored genre fields. Pass a short content description such as `A personal or founder story with a narrative arc.` or `A practical how-to post teaching a repeatable process or tactic.` Keep `limit` at 25 or fewer. Results include only model-matched posts and carry `ai_filter_reason`; use that reason to confirm fit before borrowing structure. `ai_filter` is query-time only. Never claim posts have a permanent genre label.
+
+Paid and outward runs follow the paid-run consent rule.

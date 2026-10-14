@@ -3,7 +3,7 @@ name: crm
 description: "Maintain trustworthy customer and company records by separating stable facts, judgement, and time-bound activity; deduplicating only from strong identity evidence; and keeping pipeline tied to recent, evidenced work. Use it when the user needs to create, review, clean up, merge, enrich, or progress relationship records and deals. It does not rebuild source worksheets (list-building does), run outreach (outreach does), or replace a workflow with record cleanup (workflows does)."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` is a param of the external-send sequence capabilities (`sequence.sequences.activate_audience`, `sequence.sequences.resume`, and the rest of that family), sent inside `params`, not a gating input of `tools_run`. The paid-run consent rule is one sentence in the MCP server instructions, rendered from consentRule.json and PAID_RUN_APPROVAL_THRESHOLDS: rows, dollars, credits, and the conversion. If the server asks you to sign in, approve it in the browser.
 
 # CRM
 
@@ -47,7 +47,7 @@ Keeping a CRM in step with the workspace usually has a blueprint: HubSpot, Attio
 
 ## Credit posture and sensitive effects
 
-Reads, duplicate review, and timeline inspection are free and come before enrichment. For paid enrichment, state target records, fields sought, expected coverage, credit estimate, and how result will be reviewed, then run it under the paid-run consent rule: a run above the server's row or provider-spend limit needs the user's yes first. Do not enrich records merely to fill blanks.
+Reads, duplicate review, and timeline inspection are free and come before enrichment. For paid enrichment, state target records, fields sought, expected coverage, credit estimate, and how result will be reviewed, then run it under the paid-run consent rule. Do not enrich records merely to fill blanks.
 
 Merging records, changing consequential pipeline state, bulk edits, or any action that may hide human judgment needs evidence and exact change shown first. Then act when the user asked or confirms. Keep adjacent cleanup separate.
 

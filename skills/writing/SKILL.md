@@ -3,7 +3,7 @@ name: writing
 description: "Draft, revise and publish articles and landing copy grounded in workspace context and a target query."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` is a param of the external-send sequence capabilities (`sequence.sequences.activate_audience`, `sequence.sequences.resume`, and the rest of that family), sent inside `params`, not a gating input of `tools_run`. The paid-run consent rule is one sentence in the MCP server instructions, rendered from consentRule.json and PAID_RUN_APPROVAL_THRESHOLDS: rows, dollars, credits, and the conversion. If the server asks you to sign in, approve it in the browser.
 
 # Writing
 
@@ -13,10 +13,6 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 - Choosing queries and measuring visibility: [`visibility`].
 - Short-form social posts: [`social`].
 - The `social` pack lists the tools and their exact inputs.
-
-<!-- architect-operation-contract
-{"required_capability_ids":[]}
--->
 
 Own the draft, review, revise, and publish lifecycle for long-form articles and landing copy. Every factual claim traces to a workspace-wiki fact, cited evidence, or a dated external source; the voice matches what the workspace has already published; and each lifecycle step is a deliberate, verifiable state change. Traditional keyword, ranking, and generative-citation evidence belongs to `visibility`; current external evidence and durable facts about the business belong to `knowledge`. Never re-derive those measurements or restate a business fact from memory.
 
@@ -82,3 +78,5 @@ Report the missing source, stale revision, failed destination, or missing publis
 ## Check it works
 
 Done means checked, not built. Before you report, read back everything you made or changed, and run, test or preview it where that is offered; publish or send only when the user asked. An empty, failed or wrong result means an input or setting is wrong: find which from the error or the output, correct it and check again, until it is right or a real blocker stops it. Report what you checked and what it showed.
+
+Paid and outward runs follow the paid-run consent rule.

@@ -3,7 +3,7 @@ name: outreach
 description: "Build a multi-channel sequence and enroll a workbook into it: preview one real message first, fixed scaffold with small personalized slots, channel steps with the wait inside each step, column filters decide who enrolls, paced sends."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` is a param of the external-send sequence capabilities (`sequence.sequences.activate_audience`, `sequence.sequences.resume`, and the rest of that family), sent inside `params`, not a gating input of `tools_run`. The paid-run consent rule is one sentence in the MCP server instructions, rendered from consentRule.json and PAID_RUN_APPROVAL_THRESHOLDS: rows, dollars, credits, and the conversion. If the server asks you to sign in, approve it in the browser.
 
 # Sequence building
 
@@ -69,7 +69,7 @@ When the user asks to enroll a list:
 ## State
 
 - Building never waits on connections or rows. Build, preview, validate and bind anyway, then say what to connect or what will make rows land.
-- Publishing and enrolling never send. After enrolling, leave the sequence published and never started unless the user explicitly says start; that is paused. Staged contacts on an unstarted sequence are success.
+- Publishing and enrolling never send. After enrolling, leave the sequence published and never started unless the user explicitly says start; that is paused. Staged contacts on an unstarted sequence are success. `max_live_sends` is a param of the external-send sequence capabilities (`sequence.sequences.activate_audience`, `sequence.sequences.resume`, and the rest of that family), sent inside `params`, not a gating input of `tools_run`. Sending follows the paid-run consent rule.
 - Drafted, validated, published, enrolled, started, delivered and replied are separate facts; report only what the last result proves. After an unknown outcome, read state before retrying, and never enroll or send twice.
 
 ## Done

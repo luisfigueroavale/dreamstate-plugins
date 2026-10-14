@@ -3,7 +3,7 @@ name: linkedin-warm-signals
 description: "Warm people come from worksheet sources such as post engagers, followers, profile viewers and website visits. Judge worksheet rows against Required criteria, then build a capped warm sequence while protecting sender account. Use when user wants leads from LinkedIn presence or network-first motion. Does not cover cold lists from search (list-building does), writing posts (social does) or replying in existing threads (inbox-replies does)."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` is a param of the external-send sequence capabilities (`sequence.sequences.activate_audience`, `sequence.sequences.resume`, and the rest of that family), sent inside `params`, not a gating input of `tools_run`. The paid-run consent rule is one sentence in the MCP server instructions, rendered from consentRule.json and PAID_RUN_APPROVAL_THRESHOLDS: rows, dollars, credits, and the conversion. If the server asks you to sign in, approve it in the browser.
 
 # LinkedIn Warm Signals
 
@@ -52,7 +52,7 @@ Search the tool for each task. The search returns runnable schemas for its top h
 
 - Name public engagement only; never write as if you watched someone.
 - Quote the captured comment or leave it out. Never invent what someone said.
-- Show the estimate for paid research and contact data, then run it under the paid-run consent rule: a run above the server's row or provider-spend limit needs the user's yes first.
+- Show the estimate for paid research and contact data, then run it under the paid-run consent rule.
 
 ## What to return
 

@@ -3,7 +3,7 @@ name: social
 description: "Own a short-form social post for its whole life across connected channels. Read the channel registry and learned brand voice, draft and revise, submit for review, approve, schedule or reschedule, publish now, unschedule, and archive."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` is a param of the external-send sequence capabilities (`sequence.sequences.activate_audience`, `sequence.sequences.resume`, and the rest of that family), sent inside `params`, not a gating input of `tools_run`. The paid-run consent rule is one sentence in the MCP server instructions, rendered from consentRule.json and PAID_RUN_APPROVAL_THRESHOLDS: rows, dollars, credits, and the conversion. If the server asks you to sign in, approve it in the browser.
 
 # Social
 
@@ -19,10 +19,6 @@ The `social` pack lists the tools and their exact inputs.
 ## Delete and archive
 
 When user says delete a social post or draft, delete it permanently from Dreamstate. Show deletion impact first unless user already explicitly asked to delete. Delete removes local drafts, scheduled deliveries, and published-post records. Scheduled posts are unscheduled first. It never deletes provider posts from LinkedIn or X. When user says archive, archive only. Never say deletion is unavailable.
-
-<!-- architect-operation-contract
-{"required_capability_ids":[]}
--->
 
 ## Draft posts
 
@@ -67,3 +63,5 @@ Read the saved draft, schedule or delivery result before reporting it done. When
 ## Check it works
 
 Done means checked, not built. Before you report, read back everything you made or changed, and run, test or preview it where that is offered; publish or send only when the user asked. An empty, failed or wrong result means an input or setting is wrong: find which from the error or the output, correct it and check again, until it is right or a real blocker stops it. Report what you checked and what it showed.
+
+Paid and outward runs follow the paid-run consent rule.
