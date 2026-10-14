@@ -19,8 +19,8 @@ Lists, finds, enrichments and signals happen only inside a workbook worksheet. R
 
 ## Paid and outward-facing runs
 
-Anything that writes, spends credits or reaches a real person: run mode dry_run first, show the user the preview, the row count and the credit estimate, then run live with the quote_hash that dry_run returned, a max_credits ceiling and an idempotency_key. A live run that spends credits states max_rows, the number of rows the user asked for. A quote returned by a refused live call is only a price, never a confirmation.
+Anything that writes, spends credits or reaches a real person: run mode dry_run first, show the user the preview, the row count and the credit estimate, then run live with the quote_hash that dry_run returned, a max_credits ceiling and an idempotency_key. max_credits 0 is valid only when that quote is 0. A live paid run states max_rows; an external send states max_live_sends of at least the dry_run recipient_count. A quote returned by a refused live call is only a price, never a confirmation.
 
-A paid run above the server's row or provider-spend limit, or that turns on a recurring trigger, also needs the user's yes. Ask them, and only then send approved: true with the same quote_hash. You are asserting that you asked a person; never send it on your own.
+A paid run above the server's row or provider-spend limit, a live external send above the server's recipient threshold, or a run that turns on a recurring trigger, also needs the user's yes. Ask them, and only then send approved: true with the same quote_hash. You are asserting that you asked a person; never send it on your own.
 
 `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` is a param of the external-send sequence capabilities (`sequence.sequences.activate_audience`, `sequence.sequences.resume`, and the rest of that family), sent inside `params`, not a gating input of `tools_run`. The paid-run consent rule is one sentence in the MCP server instructions, rendered from consentRule.json and PAID_RUN_APPROVAL_THRESHOLDS: rows, dollars, credits, and the conversion.
