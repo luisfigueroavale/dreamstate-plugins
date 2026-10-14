@@ -3,7 +3,7 @@ name: list-building
 description: "Build a workbook of companies or people: as few sources as possible, people at companies through the employees enrichment fanned out to a second worksheet, one column per criterion marked Required or Nice to have, run conditions that skip rows already failing, an optional score, sample then scale, and honest coverage."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run` (`dry_run` first for anything that writes, spends credits or reaches a person). If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. If the server asks you to sign in, approve it in the browser.
 
 # Workbook building
 
@@ -36,7 +36,7 @@ A list is worth contacting when every row would recognise itself in the reason y
 
 Before building, see if a blueprint does exactly what you need: its source is the right source for the hardest criterion and its columns are the chain you would build. If one does, install it, then configure its columns. If not, build your own workbook. Never install a near miss to have something to start from.
 
-When calling `workspace.blueprints.recommend`, pass `required_filters` for every user-stated hard constraint, using its closed filter enum. Read `unmet_required_filters`; do not install a recommendation that cannot apply every Required filter.
+When asking for a blueprint recommendation, pass `required_filters` for every user-stated hard constraint, using its closed filter enum. Read `unmet_required_filters`; do not install a recommendation that cannot apply every Required filter.
 
 For people engaging with competitor company posts, `signal-engaged-company-posts` exact match. Prefer it. It sets `max_posts_per_company=2`, `max_engagers_per_post=25`, `sample_size=25`, then excludes employees of selected companies in first paid qualification. Attach the company engager source directly only when a custom workbook is needed: send `company_urls` as literal string array, keep same caps, add employee-exclusion qualification before outreach.
 
@@ -81,7 +81,7 @@ Disqualifiers and the fit score:
 3. **Hardest criterion first.** Select source that natively owns every Required company fact before convenient connected-account search. Search resolved executable definitions for ready people-source definitions and their exact input contracts. Select the returned hard-firmographic people source when it owns person location, company size, and industry, then attach that source. If no resolved people source owns hard company facts, source companies first with the resolved company search using exact company size and industry, then fan out people from qualified companies. The resolved LinkedIn people search owns role and LinkedIn facets but does not declare company headcount. Never replace missing size or industry with `SaaS` keyword. Use LinkedIn source only when declared facets cover every Required pre-spend fact, or after company-first qualification. If LinkedIn provider contract later exposes company headcount, use declared facet; never claim it exists before contract says so.
 4. **Free source preview, then configure chain.** Call the zero-credit source preview first when available. Read named rows against every criterion. Aim for more than half right at source. If source can filter failing criterion, fix input and preview again; if it returns nothing, find over-narrow input. If source cannot express hardest criterion, switch source now, before workbook attachment or spend. After free preview, build complete Required qualification, 0 to 100 fit-score, and work-email preview chain with run conditions.
 5. **Paid sample only after chain exists.** Run bounded paid source sample, then run configured chain on sample and read cells. Fix and rerun until correct. Follow every run to end.
-6. **Audit.** Report qualified of total and cost per qualified row. Under about 30 percent qualified, name the Required criterion failing most and propose one change; under about 10 percent, propose a different source. Then ask how far to grow the list.
+6. **Audit.** When zero rows qualify and near misses show stated-role equivalents, widen once inside stated intent, resample, and say what you widened. Report qualified of total and cost per qualified row. Under about 30 percent qualified, name the Required criterion failing most and propose one change; under about 10 percent, propose a different source. Then ask how far to grow the list.
 7. **Scale the same source** in bounded batches toward the target, running paid columns only on rows their conditions admit. Only qualified rows count. Call a source exhausted only when a run returned fewer rows than it asked for.
 
 To grow an existing list, rerun its source with a higher target and widen only with levers that keep every Required criterion; report near matches separately.
@@ -94,7 +94,7 @@ To grow an existing list, rerun its source with a higher target and widen only w
 
 ## Gates
 
-- A paid run's ceiling is its preview's maximum; credits within it are already consented.
+- A paid run's ceiling is its preview's maximum. Run it under the paid-run consent rule: a run above the server's row or provider-spend limit needs the user's yes first, and the server refuses it without one.
 - A refusal names what to fix: fix that input and retry, three times at most, then report it.
 - A missing account blocks running, never building: build everything and say what to connect.
 - Never invent a count. Never delete rows unless the user asks.

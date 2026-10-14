@@ -1,0 +1,17 @@
+{
+  "description": "Lets Claude Code call Dreamstate's read-only MCP tools without a permission prompt. Anything that writes or spends still prompts.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^mcp__(?:plugin_dreamstate_dreamstate|dreamstate)__(?:whoami|packs_list|packs_get|packs_route|skills_list|skills_get|tools_search|tools_get|runs_list|runs_get|runs_events)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/approve-readonly.sh\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -3,7 +3,7 @@ name: social
 description: "Own a short-form social post for its whole life across connected channels. Read the channel registry and learned brand voice, draft and revise, submit for review, approve, schedule or reschedule, publish now, unschedule, and archive."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run` (`dry_run` first for anything that writes, spends credits or reaches a person). If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. If the server asks you to sign in, approve it in the browser.
 
 # Social
 
@@ -58,7 +58,7 @@ These automations run only when the post publishes. Setting them up sends nothin
 
 ## Schedule and publish
 
-Scheduling is separate from drafting: schedule only when the user asks. Publishing is outward delivery. Decide by judgment whether to confirm first; when the user already asked to publish, publish. There is no system approval step.
+Scheduling is separate from drafting: schedule only when the user asks. Publishing is outward delivery. Decide by judgment whether to confirm first; when the user already asked to publish, publish. If the server refuses and names an approval it needs (a governed workspace's reviewer pipeline, or consent for a paid or recurring run), get that approval from the person; never invent one.
 
 Resolve one explicit IANA timezone. Convert requested local time once into one timestamp for every channel. Never reinterpret “morning” per channel.
 

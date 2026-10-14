@@ -3,7 +3,7 @@ name: worksheet-tidy
 description: "Review a workbook worksheet's structure and values, including duplicate or overlapping columns, column order, types and formatting, columns to hide, criteria and run conditions that never vary, and suspicious values, then apply reversible fixes. Use it when a worksheet has grown messy, before sharing it, or before enrolling it into a sequence. It does not merge CRM records across the workspace, rebuild the list's source (list-building does) or explain failed runs (diagnostics does)."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run` (`dry_run` first for anything that writes, spends credits or reaches a person). If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. If the server asks you to sign in, approve it in the browser.
 
 # Worksheet Tidy
 

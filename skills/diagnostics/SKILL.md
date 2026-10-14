@@ -3,7 +3,7 @@ name: diagnostics
 description: "Answer one operational question with evidence, such as where a cell value came from or why it is empty, which runs failed and which are safe to retry, why a sequence has not sent, or where credits went and how to spend less. Use it when something in a worksheet, sequence or workflow looks wrong, stuck, missing or expensive. It reads before it changes anything. It does not redesign lists, sequences or workflows, or tidy worksheet structure (worksheet-tidy does)."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run` (`dry_run` first for anything that writes, spends credits or reaches a person). If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. If the server asks you to sign in, approve it in the browser.
 
 # Diagnostics
 

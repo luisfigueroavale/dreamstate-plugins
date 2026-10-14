@@ -3,7 +3,7 @@ name: skill-authoring
 description: "Read, edit and create this workspace's skills, the editable Markdown playbooks agents and people follow, keeping each one short, revision safe and in the workspace's own words. Use it when the user wants to change how a skill works, capture a repeatable practice as a new skill, or fix a skill that reports issues. It does not change what an agent is allowed to do (a skill grants nothing) and does not edit Company Context pages (knowledge does)."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run` (`dry_run` first for anything that writes, spends credits or reaches a person). If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. If the server asks you to sign in, approve it in the browser.
 
 # Skill Authoring
 

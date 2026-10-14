@@ -3,7 +3,7 @@ name: workflows
 description: "Best practices for building and running automations that are not outreach sequences: frame the job, smallest graph, validate after every change, runtime inputs, safe recovery of failed runs."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run` (`dry_run` first for anything that writes, spends credits or reaches a person). If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. A larger paid run also needs the user's yes before you send approved: true; never send it on your own. If the server asks you to sign in, approve it in the browser.
 
 # Workflows
 
@@ -19,7 +19,7 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 Best practices for building and running automations. The workflow pack lists the tools and their exact inputs; this skill is how to use them well. Outreach cadences to people are sequences, covered by the outreach skill. Everything else is a workflow.
 
 1. Build new unless asked. A new request gets a new automation built from scratch. When the user names an existing one to change, resolve that name among existing automations by listing workflows and sequences with that name as the search text, then change the match. A named thing that is not a workflow or sequence may be a task, a record or a worksheet; check those only after automations come back empty. A step inside a workflow, such as a task step, is edited in that workflow's graph, not in the task list.
-1a. "Enroll these in a workflow" is never a missing input. Use a workflow whose table trigger is the worksheet the user is looking at, or one they named; otherwise build a new draft for that worksheet (worksheet rows trigger plus fitting steps, a follow-up task per person by default), validate, and enroll. Never ask which workflow.
+1a. "Enroll these in a workflow" is never a missing input. Use a workflow whose table trigger is the worksheet the user is looking at, or one they named; otherwise build a new draft for that worksheet (worksheet rows trigger plus fitting steps, a follow-up task per person by default), validate, and enroll. Never ask which workflow. Filters on any worksheet column narrow who enrolls; with no filter every row enrolls. When the user said who should enroll, filter on the columns that hold it and report how many enrolled and how many were held back.
 2. Frame the job before building: what triggers it, who or what it acts on, what it changes, what it costs, when it stops and how often it runs.
 2a. Use a blueprint when one does exactly what you need; otherwise build your own. Workflow blueprints already cover common jobs: CRM syncs, list and do-not-contact syncs, routers, digests and signal monitors. List blueprints of the workflow kind, read what the closest one creates and what it still needs, install it, then adapt it to this request. Installing never needs answers or connections; the result names what is still to pick, so say that. Build from scratch only when no blueprint fits, and say which one came closest.
 3. Ask one clarifying question only when a required input is missing. Otherwise build with sensible defaults and say what you assumed.
@@ -31,7 +31,7 @@ Best practices for building and running automations. The workflow pack lists the
 8a. Building never waits on rows. A worksheet trigger on an empty or still-filling worksheet is still a valid enrollment: build, validate and turn it on, and rows enroll as they land. Say it is waiting for rows, never stop because the worksheet is empty.
 8b. Use the row-created trigger when each new worksheet row must enter once. It watches future row arrivals on one worksheet, carries that row identity through the graph, and does not reuse or freeze a saved selection. Use the table trigger only when user wants a selected saved-view audience.
 8c. To tag or mark a triggering row, add the worksheet-row update step. Choose its column and either replace its value or append a value to its existing list. Do not ask user to export, reimport, or manually tag rows when workflow already has triggering row identity.
-9. Decide by judgment whether to confirm before activating something that sends or spends. When the user already asked for it, do it. There is no system approval step.
+9. Activating something that sends or spends follows the paid-run consent rule: preview first, then activate with the preview's quote and ceiling. When the user already asked for it and the run is within the server's row and provider-spend limits, do it. A larger run, or a recurring trigger, also needs the user's yes, and the server refuses it without one.
 10. Draft, published, active, running and finished are separate facts. Report only what the last result proves.
 
 ## Delete and archive
