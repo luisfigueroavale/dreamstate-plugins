@@ -12,7 +12,7 @@ Article creation, article updates, and native-article deliveries accept linkedin
 
 ## The state machine
 
-1. Search the article surface for the operation that creates an article with its initial schedule. It creates the article, linked artifact, first version, and delivery scaffolding in one transaction. There is no separate bare-draft article creation path.
+1. Search the article surface for the operation that creates an article with its initial schedule. It creates the article, linked artifact, first version, and delivery scaffolding in one transaction. When the user only wants an empty draft to fill in later, search for the operation that creates an empty article draft instead; it schedules nothing.
 2. A scheduled drafting job may create or revise reviewable drafts, but it never delivers content. For outward delivery, show the exact final revision and destination, then act when the user asked or confirms.
 3. Revise through the article update operation using the current expected revision from an exact article read. On revision conflict, re-read and deliberately reapply. An in-flight delivery or slug collision is a state conflict to inspect, not a reason for blind retry. Treat prior review records as historical after any edit.
 4. Editorial submission moves the linked artifact into review. It does not schedule or deliver.

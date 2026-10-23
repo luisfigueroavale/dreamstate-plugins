@@ -12,6 +12,13 @@
 - To continue a list, run the same source again. Changing its inputs starts it over.
 - Enrich rows you already have; never add a second source for them. Fan out only when an enrichment returns a nested list per row and the user wants those items as rows.
 
+## Social account posts and AI answers
+
+- For competitor or creator content analysis, use `source.account_posts_<platform>` with pasted account links. On an existing account URL column, use `column.account_posts_<platform>`, then Fan out for one row per post.
+- Attaching an account posts source lays out Post URL, Post text, posted date, media type and engagement columns automatically. Do not add formula columns to copy those fields.
+- Reruns only buy posts not already held. These worksheets contain `content` rows, never an audience.
+- For AI visibility, use `source.geo_ai_answers` with prompts and brand details. It creates one row per prompt, engine and day. Rerunning same day is free.
+
 ## Filter values
 
 - Use the real options a filter offers for places, industries, companies, titles and schools. A guessed value returns wrong rows that look right: read the rows.
@@ -26,6 +33,6 @@
 
 - Use the request's target. When none is given, free-preview first, then run the attached source with `max_rows` in the params of `tables.table_sources.run` (not on `tools_run`) and matching `max_credits`. When no target is given, start at `max_rows:25` and ask how far to grow after reading those 25 rows.
 - Over-provision about 1.4 times the target when later criteria drop rows.
-- `tables.sourcing.preview` is a free read. Use `live` or `smoke_test`, not `dry_run`. It accepts source definition plus filters directly. For LinkedIn people search, it returns up to ten named provider rows free, with no workbook, source attachment, or credits. Use it before a paid sample. Preview maximum is ceiling; what was charged is read from the finished run. Counts before the run finishes are unknown, not zero.
+- `tables.sourcing.preview` is a free read. Door modes `dry_run` and `live` both execute this read. Pass definition_id and its source binding values inside source_inputs; keep execution mode at the door. Resolve the selected source input contract, including schema references. Flattened source fields and params.dry_run are rejected. For LinkedIn people search, it returns up to ten named provider rows free, with no workbook, source attachment, or credits. Use it before a paid sample. Preview maximum is ceiling; what was charged is read from the finished run. Counts before the run finishes are unknown, not zero.
 - Run an enrichment on a few rows, read them, then continue the remaining rows instead of rerunning the sample.
 - A cell blocked by a daily limit is the workspace's pacing cap, not a defect.

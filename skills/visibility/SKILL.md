@@ -3,7 +3,7 @@ name: visibility
 description: "Get found by search engines and answer engines. Pick the query set, gather crawl, index, mention and citation evidence, fix pages, then measure the change."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. max_credits 0 is valid only when that quote is 0. A larger paid run, or a live external send above the server's recipient threshold, also needs the user's yes before you send approved: true; never send it on your own. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` is a param of the external-send sequence capabilities (`sequence.sequences.activate_audience`, `sequence.sequences.resume`, and the rest of that family), sent inside `params`, not a gating input of `tools_run`. The paid-run consent rule is one sentence in the MCP server instructions, rendered from consentRule.json and PAID_RUN_APPROVAL_THRESHOLDS: rows and credits, with no provider prices. If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. max_credits 0 is valid only when that quote is 0. A larger paid run, a live external send above the server's recipient threshold, or a run that turns on a recurring trigger, also needs approved: true with the same quote_hash, after reviewing the preview. Free formulas need no paid-run approval; row execution caps still apply. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` goes inside `params` only when the fetched capability schema declares it (for example, a one-contact workflow run). Sequence start, resume, launch and enrollment do not accept it; they have no lifetime send ceiling. The paid-run consent rule is one sentence in the MCP server instructions, rendered from consentRule.json and PAID_RUN_APPROVAL_THRESHOLDS: rows and credits, with no provider prices. If the server asks you to sign in, approve it in the browser.
 
 # Visibility
 
@@ -46,6 +46,10 @@ Read measured evidence, propose prioritized changes, and treat paid or asynchron
 Prompt visibility is citations or qualifying mentions divided by completed runs for that exact prompt, engine set, locale and window. Report run count, citation count and percentage together. Zero citations over zero runs is unavailable, not 0%. Weight averages by their denominators and never merge engines, locales or windows silently. Sentiment uses its own total. Citation share, mention rate and referral traffic are distinct and never one score.
 
 The tracked query set is a revisioned instrument: changing a prompt's wording breaks the comparison, so change it deliberately and disclose the break.
+
+## GEO answer worksheet
+
+Use `source.geo_ai_answers` for a `content` worksheet when prompts need direct ChatGPT and Google AI Overview evidence. Bind prompts, brand details and competitors. It creates one row per prompt, engine and day. Rerunning same day is free, so read existing rows before starting another run.
 
 ## Handoff to writing
 

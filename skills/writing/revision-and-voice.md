@@ -24,7 +24,7 @@ Before writing a first sentence, read 3-5 recently published pieces by searching
 
 ## Saved library outputs
 
-A saved output is a reusable library copy of generated post text, not a live calendar artifact and not a published post. Create, revise, list, and archive it through its own dedicated capabilities, discovered at runtime; archiving marks it inactive rather than hard-deleting it. Revising it can touch any of its editable fields on an active row, but it never schedules, publishes, enrolls, or sends anything. After updating, the library row is the source of truth; do not call a scheduling or publish capability just to "save" a library edit.
+A saved output is a reusable library copy of generated post text, not a live calendar artifact and not a published post. Create, revise, list, and delete it through its own dedicated capabilities, discovered at runtime. Deleting removes the library copy for good and nothing restores it, so confirm with the user before deleting one they did not ask to remove. Revising it can touch any of its editable fields on an active row, but it never schedules, publishes, enrolls, or sends anything. After updating, the library row is the source of truth; do not call a scheduling or publish capability just to "save" a library edit.
 
 ## Landing copy specifics
 

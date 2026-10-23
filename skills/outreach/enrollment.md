@@ -8,6 +8,8 @@ When the user asked to enroll, do not stop at the draft: publishing is part of e
 
 Enrollment reads leads straight from the worksheet rows; do not create or import contacts first. A sequence takes one enrollment source: a workbook view, or one workflow, never both. A published sequence bound to a view keeps enrolling rows that later land in or start matching it. Filters on any worksheet column narrow who enrolls; with no filter every row enrolls. When the user said who should get the sequence, filter on the columns that hold it and report how many were held back. Enrollment is free and never sends. Starting is the moment real messages begin, paced over time.
 
+Social account post and AI answer worksheets hold content rows, never an audience or subject. To reach authors, send unique author URLs to a people worksheet first.
+
 Enrolling from a worksheet binds it as the sequence's trigger. Report the trigger state and the sequence link.
 
 "Enroll in a sequence" means the people worksheet of the workbook the user is looking at, or just built, into a new sequence built for it, even when a company worksheet is open. Use an existing sequence only when the user names it; never report another worksheet's enrollment as the answer.

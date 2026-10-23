@@ -3,7 +3,7 @@ name: social
 description: "Own a short-form social post for its whole life across connected channels. Read the channel registry and learned brand voice, draft and revise, submit for review, approve, schedule or reschedule, publish now, unschedule, and archive."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. max_credits 0 is valid only when that quote is 0. A larger paid run, or a live external send above the server's recipient threshold, also needs the user's yes before you send approved: true; never send it on your own. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` is a param of the external-send sequence capabilities (`sequence.sequences.activate_audience`, `sequence.sequences.resume`, and the rest of that family), sent inside `params`, not a gating input of `tools_run`. The paid-run consent rule is one sentence in the MCP server instructions, rendered from consentRule.json and PAID_RUN_APPROVAL_THRESHOLDS: rows and credits, with no provider prices. If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. max_credits 0 is valid only when that quote is 0. A larger paid run, a live external send above the server's recipient threshold, or a run that turns on a recurring trigger, also needs approved: true with the same quote_hash, after reviewing the preview. Free formulas need no paid-run approval; row execution caps still apply. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` goes inside `params` only when the fetched capability schema declares it (for example, a one-contact workflow run). Sequence start, resume, launch and enrollment do not accept it; they have no lifetime send ceiling. The paid-run consent rule is one sentence in the MCP server instructions, rendered from consentRule.json and PAID_RUN_APPROVAL_THRESHOLDS: rows and credits, with no provider prices. If the server asks you to sign in, approve it in the browser.
 
 # Social
 
@@ -15,6 +15,10 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 - Reddit post copy: [`reddit-posts`].
 - Articles and landing copy: [`writing`].
 The `social` pack lists the tools and their exact inputs.
+
+## Published-post scoring
+
+For published-post review, read `visibility.analytics.post_score_get` for one post or `visibility.analytics.post_scores_list` for a date range. Scores compare each author account with its own same-platform recent baseline at 24h and 7d. A `not_enough_history` label means fewer than three prior posts, not poor performance. These reads use stored snapshots and never refresh a provider.
 
 ## Delete and archive
 

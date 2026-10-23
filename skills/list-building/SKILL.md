@@ -3,7 +3,7 @@ name: list-building
 description: "Build a workbook of companies or people: as few sources as possible, people at companies through the employees enrichment fanned out to a second worksheet, one column per criterion marked Required or Nice to have, run conditions that skip rows already failing, an optional score, sample then scale, and honest coverage."
 ---
 
-Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. max_credits 0 is valid only when that quote is 0. A larger paid run, or a live external send above the server's recipient threshold, also needs the user's yes before you send approved: true; never send it on your own. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` is a param of the external-send sequence capabilities (`sequence.sequences.activate_audience`, `sequence.sequences.resume`, and the rest of that family), sent inside `params`, not a gating input of `tools_run`. The paid-run consent rule is one sentence in the MCP server instructions, rendered from consentRule.json and PAID_RUN_APPROVAL_THRESHOLDS: rows and credits, with no provider prices. If the server asks you to sign in, approve it in the browser.
+Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabilities, `tools_get` for the exact input schema, then `tools_run`. Anything that writes, spends credits or reaches a person: dry_run first, then live with the quote_hash the dry_run returned, a max_credits ceiling and an idempotency_key. max_credits 0 is valid only when that quote is 0. A larger paid run, a live external send above the server's recipient threshold, or a run that turns on a recurring trigger, also needs approved: true with the same quote_hash, after reviewing the preview. Free formulas need no paid-run approval; row execution caps still apply. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` goes inside `params` only when the fetched capability schema declares it (for example, a one-contact workflow run). Sequence start, resume, launch and enrollment do not accept it; they have no lifetime send ceiling. The paid-run consent rule is one sentence in the MCP server instructions, rendered from consentRule.json and PAID_RUN_APPROVAL_THRESHOLDS: rows and credits, with no provider prices. If the server asks you to sign in, approve it in the browser.
 
 # Workbook building
 
@@ -15,7 +15,7 @@ Owns: sources, columns, criteria, and building qualified lists.
 - Durable customer and company records: [`crm`].
 - Warm sources: [`linkedin-warm-signals`].
 - Explaining cell values and failed runs: [`diagnostics`].
-The `tables` pack lists the tools and their exact inputs. When user says delete, permanently delete named workbook, worksheet, template, automation, contact, row, or column after showing removal impact and receiving explicit approval. When user says archive, archive only. Never say permanent deletion is unavailable.
+The `tables` pack lists the tools and their exact inputs. When user says delete, permanently delete named workbook, worksheet, template, automation, contact, row, or column after reviewing removal impact and setting the commit field. When user says archive, archive only. Never say permanent deletion is unavailable.
 
 A list is worth contacting when every row would recognise itself in the reason you contact it. Find the smallest set where that is true, prove it on each row, and stop.
 
@@ -34,6 +34,8 @@ Before building, see if a blueprint does exactly what you need: its source is th
 When asking for a blueprint recommendation, pass `required_filters` for every user-stated hard constraint, using its closed filter enum. Read `unmet_required_filters`; do not install a recommendation that cannot apply every Required filter.
 
 For people engaging with competitor company posts, `signal-engaged-company-posts` exact match. Prefer it. It sets `max_posts_per_company=2`, `max_engagers_per_post=25`, `sample_size=25`, then excludes employees of selected companies in first paid qualification. Attach the company engager source directly only when a custom workbook is needed: send `company_urls` as literal string array, keep same caps, add employee-exclusion qualification before outreach.
+
+For incoming messages or booked meetings, read [Incoming people sources](incoming-people.md). Use `signal-received-dm` for Received DM plus AI fit score, or `signal-meeting-booked` for Meeting booked plus profile enrichment. Each installs exactly one people worksheet and two columns. Qualification follows the user's rubric, which may describe sales pitches, support requests, or another purpose. These sources do not require the general prospecting enrichment and email chain below.
 
 ## Free preview before build, complete chain before paid sample
 
@@ -62,11 +64,12 @@ Run conditions as filters:
 - Exclude rows that failed, not rows that are still unsure, unless the column is only worth running on qualified rows (contact data, emails): those require a pass.
 - Order columns cheapest and most selective first: free formulas and exact fields, then enrichments, then judgment columns, then contact data.
 - Read the column back after saving and confirm the condition is there.
+- Research column shape, fixed output: read `column-authoring.md`, Research columns.
 
 Disqualifiers and the fit score:
 - A disqualifier the row already decides is a run condition, never a new column. Role or headline keywords: one `not_contains` condition per word (student, intern, university) on the title or headline. Competitors: company name `not_in` the competitor names from Company Context. Size and dates: numeric ranges. Put them on the first paid column and on the enrollment gate.
 - To add or change exclusions on an existing worksheet, edit the run conditions of its existing columns. Do not add columns for them.
-- The AI fit score is one `column.ai_fit_score` column (TypeSafe, numeric `score` 0 to 100), never `column.ai`. column.ai_fit_score is the way to score fit, ICP, or lead qualification, and it is the cheaper option. Its rubric lists every criterion as Required or Nice to have, with the row's signals (engagement, hiring, recency, role) as evidence. A Required fail scores 0; missing data is unsure. Views and enrollment read the numeric `fit_score_value` (`fit_score.score`), not the score object. Enroll only rows at or above the threshold the user set.
+- The AI fit score is one `column.ai_fit_score` column (TypeSafe, numeric `score` 0 to 100), never `column.ai`. column.ai_fit_score is the way to score fit, ICP, or lead qualification, and it is the cheaper option. Its rubric lists every criterion as Required or Nice to have, with the row's signals (engagement, hiring, recency, role) as evidence. A Required fail scores 0; missing data is unsure. Views and enrollment read the numeric `fit_score_value` (the `score` field of `fit_score`), not the score object. Enroll only rows at or above the threshold the user set.
 - Add an AI or research column only for judgment the row cannot express (what a company actually sells, whether a post is a real complaint), never for something a keyword or a list match decides.
 
 ## Loop

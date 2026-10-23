@@ -33,6 +33,10 @@ LAST({{company_linkedin_url}}, '/')
 
 Read its current state before changing it, so an edit never overwrites a newer change.
 
+## Research columns
+
+Create research with `binding_spec`, not `prompt`: `definition_id: "column.research"`, only `input_bindings.query`, and query `{ "kind": "template", "parts": [{ "kind": "literal", "value": "What recent news matters for " }, { "kind": "column", "column_key": "company" }, { "kind": "literal", "value": "?" }] }`. Research output is fixed `{status, answer, evidence}`. Do not declare `output`.
+
 ## Clay CSV rebuilds
 
 CSV values are baseline evidence, not recovered Clay configuration. Ask once for missing Clay prompt, formula, waterfall, and HTTP/tool settings. If user lacks them, read headers and values, then supply only catalog-backed inferred equivalents: enrichment, AI/research prompt marked `# approximated, original Claygent prompt not recovered`, formula reference, provider waterfall in supported catalog order, or native tool mapping. Mark inferred plans approximate. Create columns disabled, preserve raw Clay column, request `tables.table_runs.preview_cost` for each rebuilt column. Never invent provider names, tool ids, or capability ids. No catalog equivalent means keep raw column and report reason.
