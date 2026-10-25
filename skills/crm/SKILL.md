@@ -16,6 +16,8 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 
 CRM is shared operating memory for customer relationships. A record lets team see who someone is, what happened, what is next, and why pipeline says what it says. Good CRM work makes future action safer; it does not make database look full.
 
+Creating or binding CRM people from otherwise unbound worksheet rows is deliberate CRM cleanup or import work. It is not required before outreach can preview, rehearse, or enroll those worksheet rows: sequence enrollment resolves identity records as part of its own staging flow.
+
 ## The invariant
 
 Preserve evidence, identity, and human judgement. Read before every change. Every read is free, so inspect current record, related records, recent timeline, ownership, and open work before creating, updating, or merging anything.

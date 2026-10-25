@@ -18,7 +18,7 @@ The `social` pack lists the tools and their exact inputs.
 
 ## Published-post scoring
 
-For published-post review, read `visibility.analytics.post_score_get` for one post or `visibility.analytics.post_scores_list` for a date range. Scores compare each author account with its own same-platform recent baseline at 24h and 7d. A `not_enough_history` label means fewer than three prior posts, not poor performance. These reads use stored snapshots and never refresh a provider.
+For published-post review, find the published-post score read for one post or the published-post score list for a date range. Scores compare each author account with its own same-platform recent baseline at 24h and 7d. A `not_enough_history` label means fewer than three prior posts, not poor performance. These reads use stored snapshots and never refresh a provider.
 
 ## Delete and archive
 

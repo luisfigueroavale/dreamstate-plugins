@@ -67,6 +67,13 @@ When the user asks to enroll a list:
 - Keep filters, identity mapping, cap, and priority inside each audience. Never apply one global filter or sort across several workbooks. Use a workflow source only when entry needs logic a workbook audience cannot express.
 - When several people from one company are enrolled, turn on company pause on reply.
 
+## Workbook rows before CRM
+
+- A worksheet row with usable channel identity and copy fields is enough to render real personalized previews and rehearse sequence launch. Do this before, and without, a separate CRM-person creation step.
+- Live sequence enrollment owns identity materialization: it matches a row to one existing person or creates and binds the missing person while staging the enrollment. That staging does not send.
+- Treat a pending identity binding in a preview as planned enrollment work, not a request for the user to create contacts. Report only the actual result: missing usable identity, an identity conflict, a permission refusal, or another returned readiness blocker.
+- Creating records for otherwise unbound rows remains a deliberate CRM hygiene or import operation. It is not outreach preparation and must not be offered as a prerequisite for a workbook preview, rehearsal, or enrollment.
+
 ## State
 
 - Building never waits on connections or rows. Build, preview, validate and bind anyway, then say what to connect or what will make rows land.

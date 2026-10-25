@@ -46,6 +46,21 @@ A play has no pack of its own. It routes across packs: `knowledge` for Company C
 - Each morning: the top five to ten with what they did, when, and an honest first line built on a true fact.
 - Metric: warm people contacted from the list, replies they produce.
 
+**People engaging with a prospect's competitors** (competitor-engager-prospecting). Find people already paying attention to competitors, then contact only people who fit target buyer.
+- State caps and credit estimate before any paid run. Pilot five targets first. Get review of competitor LinkedIn URLs before spend.
+- Build or reuse one target worksheet from any source. Add fit score against target buyer and run later work only where score is 70 or higher.
+- Add an AI or web-research column returning no more than five competitor LinkedIn URLs per target. Review returned URLs before spend.
+- Add Run worksheet column. For each reviewed competitor URL, run post engagers in profile mode once. Child worksheet receives engagers, excludes competitor employees and client's existing customers, then scores fit against target buyer.
+- Return top ten child rows, total count, and share link to parent row. Share link lasts 30 days and can be revoked.
+- Sequence step one states count only, with no link. Sequence step two sends share link. Before reply, teaser may name person, title, company, and what person engaged with. Never include email or phone.
+- Metric: qualified competitor engagers per target, then replies from sequence.
+
+## Choosing one result, a split, or child worksheet
+
+- Use a function when each parent row needs one value, such as one score, verdict, URL, or count.
+- Use fan out for one-off split where returned items become ordinary rows and no parent-scoped result must return.
+- Use Run worksheet when each parent must produce bounded child rows, run a child qualification chain, then return ranked rows, count, or share link. Child identity stays scoped to parent, so same person may appear under different targets.
+
 **What should I post?** (founder-posting-system). Regular LinkedIn posts in the user's own voice.
 - Learn the voice from the account's past posts; posts that drew comments are the best examples.
 - Draft a few posts or plan a week of different kinds (customer story, contrarian take, build in public), each with one concrete point, who it is for, and a call to action.

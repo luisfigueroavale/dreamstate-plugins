@@ -33,7 +33,7 @@ Read first, change second. Pending, queued, paced, capped and unknown are not fa
 | Where did this value come from, or why is this cell empty? | The cell, its column, the run that settled it |
 | Which rows or runs failed, and which are safe to retry? | Run history, then one run's events |
 | Why has this sequence not sent? | Sequence state, enrollment, sender, sending hours, caps |
-| Why did this cost so much, and how do I spend less? | Finished runs and charged credits |
+| Why did this worksheet cost so much, and how do I spend less? | `tables.worksheet.credit_summary`, then individual charged runs |
 
 ## Evidence order
 
@@ -45,6 +45,12 @@ Read first, change second. Pending, queued, paced, capped and unknown are not fa
 6. **Act and read back.** A retry that only spends credits runs after showing scope and estimate. Follow it to a final result.
 
 Search the tool for the read you need. The search returns runnable schemas for its top hits; read any other ids together in one tools_get, then run.
+
+For worksheet costs, read `tables.worksheet.credit_summary` before drilling into
+runs. Its decimal total and per-column breakdown cover the entire worksheet,
+including historical executions. Check completeness and pending attempts: a
+partial recorded total does not prove the remaining work was free. Current cell
+values and the visible grid window do not represent cumulative spend.
 
 ## Common findings
 
