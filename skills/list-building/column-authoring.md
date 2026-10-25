@@ -33,6 +33,8 @@ LAST({{company_linkedin_url}}, '/')
 
 Read its current state before changing it, so an edit never overwrites a newer change.
 
+The same fence applies to the worksheet source: read `tables.table_sources.list`, then use `tables.executables.save` with a source target and the returned state and binding revision. Put the intended authored change in `binding_spec`; never construct a compiled binding or digest. Omitted policy remains intact, including event triggers. A valid demand policy may be saved before a provider account is connected, and a one-off source run never needs a policy change.
+
 ## Research columns
 
 Create research with `binding_spec`, not `prompt`: `definition_id: "column.research"`, only `input_bindings.query`, and query `{ "kind": "template", "parts": [{ "kind": "literal", "value": "What recent news matters for " }, { "kind": "column", "column_key": "company" }, { "kind": "literal", "value": "?" }] }`. Research output is fixed `{status, answer, evidence}`. Do not declare `output`.

@@ -12,6 +12,13 @@
 - To continue a list, run the same source again. Changing its inputs starts it over.
 - Enrich rows you already have; never add a second source for them. Fan out only when an enrichment returns a nested list per row and the user wants those items as rows.
 
+## Changing a source
+
+- Read `tables.table_sources.list` first. Use the returned source id, state, binding revision and binding as the current state; never reconstruct a compiled binding or its digest.
+- Author a source change with `tables.executables.save`: set target kind to `source`, copy the returned source id, state and binding revision into its target fence, and express only the intended change in `binding_spec`. The save path compiles the binding and preserves omitted existing source policy.
+- Preserve an existing event trigger and its other policy unless the user explicitly wants to change it. A source can have valid demand policy before its provider account is connected; save that draft, connect when the run says it is needed.
+- An explicit `tables.table_sources.run` does not require a policy edit. Run the current source when the user wants rows now; change its policy only when the future behavior should change.
+
 ## Social account posts and AI answers
 
 - For competitor or creator content analysis, use `source.account_posts_<platform>` with pasted account links. On an existing account URL column, use `column.account_posts_<platform>`, then Fan out for one row per post.
