@@ -12,6 +12,7 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 - Owns: judging warm-source rows and warm send caps.
 - Sequence mechanics, copy, and pacing: [`outreach`].
 - Cold lists from search sources: [`list-building`].
+- Replies on those people's posts, and list watching: [`engage`].
 - The `sequence` pack lists the tools and their exact inputs.
 
 People who already engaged are the warmest audience a business has. Capture the signal into a worksheet, keep only the ones who fit, and reach them with a message that names the signal honestly, at a pace the account can sustain.

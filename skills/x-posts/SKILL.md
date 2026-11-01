@@ -11,6 +11,7 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 
 - Owns: X post and thread copy.
 - Post lifecycle, review, and publishing: [`social`].
+- Replies, mentions and list posts on X: [`engage`].
 - The `social` pack lists the tools and their exact inputs.
 
 Write for a feed that discards most posts in under two seconds. Every line earns the next: the hook earns post two, post two earns post three.
