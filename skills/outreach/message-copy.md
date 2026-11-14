@@ -26,7 +26,7 @@ Every message should only make sense for this one lead. Name and company alone f
 
 Make these slots AI variables when the raw value is long or messy. Add an AI column per slot that writes one short phrase from that row's evidence only, for example `hiring_angle` (the role and why it matters), `post_topic` (what the post asked for, in five to eight words) or `opener` (one sentence a human would write). Give it a fallback answer for rows without evidence. Run it on one pilot row, read the output, then run it on the qualified rows and reference the column in the steps as `{{hiring_angle}}`, `{{post_topic}}` or `{{opener}}`. Never paste a raw headline or a whole post into a sentence, and greet with `{{first_name}}`, never the full name.
 
-Use conditions to keep the wrong people out and the right copy in. Filter enrollment on the signal and the evidence the copy needs: every Required criterion column passes, a title family matched with contains or in (never one exact title string), the signal column is set (the job title, the post topic, the opener). When different groups need different angles (founders versus sales leaders, hiring versus posting), filter each group into its own sequence or saved view rather than one message that tries to fit both.
+Use conditions to keep the wrong people out and the right copy in. Filter enrollment on the signal and the evidence the copy needs: every Required criterion column passes, a title family matched with contains or in (never one exact title string), the signal column is set (the job title, the post topic, the opener). When different groups need different angles (founders versus sales leaders, hiring versus posting), filter each group into its own sequence with an enrollment column filter rather than one message that tries to fit both.
 
 Each follow-up brings a new reason to reply (a relevant result, a short resource, an easy question), not "following up" on the first message. Read every step side by side before publishing: if two steps say the same thing, rewrite the later one. If a step would read the same for any company, it is not done.
 
@@ -41,3 +41,17 @@ If the rendered messages across rows read nearly identical apart from the name, 
 ## A/B testing
 
 When a step writes with AI, it can test variants: vary either the angle (the overall approach) or the opener (only the first line), not both, and keep each variant a genuinely different idea rather than a paraphrase. Keep assignment stable for a logical execution across retries. Use the existing variant report; do not promise automatic winner promotion or rebucket recipients after a retry. Separate human replies, positive replies and confirmed meetings, with explicit denominators and read completeness. An automatic response or OOO pause is not a human reply. Read the results per variant before changing copy, and change the losing variant, not the whole sequence.
+
+## Spintax
+
+`{a|b|c}` chooses one option per person and step at send time. It works in email subject and body and WhatsApp messages only. Use `sequence.outreach.ai_spintax_generate` to add it to a finished message.
+
+- Use 2 to 4 phrase-level spin points per message, with 3 or 4 options each. For a subject, use at most one point with 2 or 3 options and keep it under the original length plus 10 characters.
+- Keep options equivalent in meaning, tone, length and reading level. Check grammar, tense, number, articles, capitalization and punctuation in every combination.
+- Never vary names, companies, numbers, prices, dates, products, offers, links or the concrete ask. Copy every `{{variable}}` and URL exactly. Never put a group inside a variable or wrap a variable alone.
+- Preserve line breaks, paragraphs, sentence order and sentence count. Never nest groups or leave an option empty.
+- If copy is too short or specific to vary safely, leave it unchanged.
+
+Good: `{Hi|Hello|Hey} {{first_name}}, can we talk Tuesday?`
+
+Bad: `{Hi|} {{{{first_name}}|friend}}, can we talk {Tuesday|Friday}?`

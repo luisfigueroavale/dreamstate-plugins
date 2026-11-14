@@ -9,8 +9,8 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 
 ## Boundary
 
-- Owns: explaining cell values, failed runs, and unsent work.
-- Sequence has not sent: [`outreach`].
+- Owns: explaining cell values, failed runs, and unsent work, including why a sequence or a lead has not sent.
+- Building or editing a sequence: [`outreach`].
 - Sources and columns: [`list-building`].
 - Reversible worksheet fixes: [`worksheet-tidy`].
 - Building and running automations: [`workflows`].
@@ -21,6 +21,30 @@ Good diagnosis answers one question with the least evidence that settles it. Pic
 ## Backing packs
 
 Generic run controls and run records use `runs_get`, `runs_events`, and `runs_cancel`, without a pack. The workspace pack explains credits, limits and action costs. The object itself belongs to its own pack: tables for cells and columns, sequence for sends, workflow for graph runs, unibox for conversations.
+
+For questions about where credits went, call `workspace.usage.spend_breakdown` with the requested time window. Report unattributed spend and distinguish the overall total from the returned top groups.
+
+## CRM connections (HubSpot, Attio, Salesforce)
+
+Connecting, reconnecting, and disconnecting a CRM are done by a person in Settings, Integrations. A missing permission is fixed by the person reconnecting.
+
+1. List connections with `integrations.outreach_connectors_list` and take `connection_id`.
+2. Read settings with `integrations.crm_management_get`.
+3. Read available fields and granted permissions with `integrations.crm_management_metadata`.
+4. Count before changing with `integrations.crm_management_preview`.
+5. Change import, push, or mappings with `integrations.crm_management_save`. Pass `expected_version` from the get call.
+6. Run now with `integrations.crm_management_refresh`.
+7. Read failures with `integrations.crm_management_logs` filtered to result `failed`.
+8. Retry one record with `integrations.crm_record_retry`.
+
+These tools belong to the `integrations` pack and are also listed in the `crm` pack. `crm.sync.*` schedules one object pair; `integrations.crm_management_*` holds the import rules, push rules, and field mappings.
+
+Sync rules:
+- A record deleted in the CRM is not deleted here. It is marked so it is not imported again or pushed back.
+- A contact imports even when the CRM did not grant company permission; it arrives without a company link.
+- A record that matches more than one existing record is skipped and logged, never guessed. Merge the duplicates, then retry that record.
+- Each field mapping carries its own update rule. The defaults a new connection gets: a value imported from the CRM replaces ours, and a value pushed to the CRM only fills what is empty there.
+- Push creates people in the CRM only for the audience the settings name (by default, people who replied).
 
 ## The invariant
 
@@ -86,3 +110,13 @@ Read audience matches, eligible, duplicates, blocked rows, staged candidates, ad
 Separate invitation requests from DMs waiting for acceptance. A waiting-connection timestamp is the acceptance deadline, not an earliest send time: acceptance can wake the DM sooner. Distinguish a schedule window, a daily or rolling-week limit, reservations owned by existing obligations, a provider restriction, missing identity, a disconnected sender and a service failure. Future invitation commitments can reserve weekly room even if they use no daily room today. Preserve configured limits.
 
 For a person, read the current step, pinned source and version, pause/stop reason, next check or deadline, attempt and receipt evidence before suggesting a repair. Unknown delivery requires reconciliation; proven absence is a different outcome. Resume only the system pause that the evidence allows to recover. Never resume manual stops, replies, unsubscribes or other recipient stops. Archived personalization sources and OOO without a reliable structured return date require visible review. Do not infer return dates from keywords or elapsed time.
+
+## Reading sequence state
+
+A lead with status running and a wait code is waiting, not paused. Read `wait.is_paused`, `wait.explanation` and `wait.resumes_when` on `sequence.sequences.contacts_list` and `person_timeline_get`; they say in words what the lead waits for and what ends it.
+
+Read `sending_state` on `workflow.automations.get` for the sequence itself, and `sendability` on `sequence.sequences.sender_accounts_list` for each sender account. Say which one blocks sending before you suggest a repair.
+
+A sequence with `status: published` is live. A `next_run_at` far in the future on a waiting_connection lead is the acceptance deadline, not a send time.
+
+For a source run, `source_stop.explanation` says why it stopped. `source_stop.can_continue` says whether more rows can be loaded, and `source_stop.continue_with` names the call that loads them.

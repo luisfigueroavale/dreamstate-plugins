@@ -11,10 +11,11 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 
 - Owns: X post and thread copy.
 - Post lifecycle, review, and publishing: [`social`].
-- Replies, mentions and list posts on X: [`engage`].
 - The `social` pack lists the tools and their exact inputs.
 
 Write for a feed that discards most posts in under two seconds. Every line earns the next: the hook earns post two, post two earns post three.
+
+Before drafting, check what has worked for this account on X (format, length, hook, posting hour) with `social.content.performance_query` (group by post format, published hour or weekday, and read engagement rate, which is likes, comments, reposts and saves over impressions for the same posts at the same age and is empty when impressions are not recorded), and treat a small sample as a hint.
 
 ## Single post or thread
 
@@ -60,6 +61,11 @@ Standard accounts get 280 weighted characters per post; Premium accounts get up 
 ## Voice and formatting
 
 Write like a person: direct, sentences under about 20 words, varied openings. Line breaks mark the turn or the quotable line. No filler ("very", "really", "just", "basically"). No em or en dashes. Hashtags: none by default, at most one real community tag. Emoji: at most one per post. Put links in a reply or the last post, never inside the hook. Mention people only with context, and resolve every mention before scheduling.
+
+## Media
+
+Up to 4 images, or 1 GIF, or 1 video. No documents.
+Attach media with the social skill's upload flow.
 
 ## Never write
 

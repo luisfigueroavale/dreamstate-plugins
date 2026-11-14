@@ -12,8 +12,8 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 Owns: sources, columns, criteria, and building qualified lists.
 - Multi-step outreach sequences: [`outreach`].
 - Existing worksheet structure and values: [`worksheet-tidy`].
-- Durable customer and company records: [`crm`].
-- Warm sources: [`linkedin-warm-signals`].
+- Durable customer and company records: [`crm`]. Warm sources: [`linkedin-warm-signals`].
+- What past outreach produced for an audience: [`performance`].
 - Explaining cell values and failed runs: [`diagnostics`].
 The `tables` pack lists the tools and their exact inputs. When user says delete, permanently delete named workbook, worksheet, template, automation, contact, row, or column after reviewing removal impact and setting the commit field. When user says archive, archive only. Never say permanent deletion is unavailable.
 
@@ -25,7 +25,7 @@ A list is worth contacting when every row would recognise itself in the reason y
 - A row is a raw entry from the source. A qualified row passes every Required criterion.
 - Track every criterion the user named, even when the source already filtered on it, and mark it Required or Nice to have. A criterion is a condition, not a column: put it at the cheapest place that decides it (a source filter, a run condition on a value already on the row, or a condition in the fit score). Its result is pass, fail or unsure. Missing data is unsure, never a fail.
 - Keep disqualified rows: they are paid for. Views decide what to show.
-- Exclude competitors by default: rows at a competitor company (named in request or Company Context) and competitor companies themselves fail a Required criterion, applied in first paid column run condition. Say that you excluded them and which. When exclusion is required and Company Context plus request contain no competitor values, ask once for competitor names before any paid sample. Do not source approximate list, create paid rows, or substitute keyword exclusion.
+- Before building a list, read the workspace exclusions with `senders.suppressions.exclusions_list`. If there is no Competitors exclusion and Company Context or the request names competitors, propose creating a company exclusion named "Competitors" (`senders.suppressions.exclusions_create`, `record_type` company, condition `domain` `is_any_of` the competitor domains) and say that exclusions apply to every sequence on the chosen channels. Competitors and internal team belong in workspace exclusions, not in per-list run conditions. When exclusion is required and Company Context plus request contain no competitor values, ask once for competitor names before any paid sample. Do not source approximate list, create paid rows, or substitute keyword exclusion.
 
 ## Blueprint or build
 
@@ -79,8 +79,8 @@ Run conditions as filters:
 - Research column shape, fixed output: read `column-authoring.md`, Research columns.
 
 Disqualifiers and the fit score:
-- A disqualifier the row already decides is a run condition, never a new column. Role or headline keywords: one `not_contains` condition per word (student, intern, university) on the title or headline. Competitors: company name `not_in` the competitor names from Company Context. Size and dates: numeric ranges. Put them on the first paid column and on the enrollment gate.
-- To add or change exclusions on an existing worksheet, edit the run conditions of its existing columns. Do not add columns for them.
+- A disqualifier the row already decides is a run condition, never a new column. Role or headline keywords: one `not_contains` condition per word (student, intern, university) on the title or headline. Size and dates: numeric ranges. Put those list-specific disqualifiers on the first paid column and on the enrollment gate. Competitors and internal team belong in workspace exclusions, not in per-list run conditions.
+- To add or change list-specific disqualifiers on an existing worksheet, edit the run conditions of its existing columns. Do not add columns for them.
 - The AI fit score is one `column.ai_fit_score` column (TypeSafe, numeric `score` 0 to 100), never `column.ai`. column.ai_fit_score is the way to score fit, ICP, or lead qualification, and it is the cheaper option. Its rubric lists every criterion as Required or Nice to have, with the row's signals (engagement, hiring, recency, role) as evidence. A Required fail scores 0; missing data is unsure. Views and enrollment read the numeric `fit_score_value` (the `score` field of `fit_score`), not the score object. Enroll only rows at or above the threshold the user set.
 - Add an AI or research column only for judgment the row cannot express (what a company actually sells, whether a post is a real complaint), never for something a keyword or a list match decides.
 
@@ -112,6 +112,10 @@ Establish whether the LinkedIn match is Required or Nice to have from the reques
 
 Read the sample's actual cells, citations, failures and credits before growing the source demand. Increasing demand resumes its saved pagination and paid page tail. Monitoring new posts and continuing older pages are different operations; use the source's declared controls. A fulfilled demand should not trigger another provider read. Do not promise that refreshing mutable engager lists is free or that a source is exhausted merely because one page contains duplicates.
 
+For problem-mention searches, derive the problem and intended audience from the request and Company Context. Do not silently narrow a general complaint request to acquisition, cold email, or another use case. Inspect a small source sample before expanding. If it produces no qualified authors or mostly unrelated meanings, review the query and qualification rubric before buying more pages. Check uncertain decisions against the complete post; a truncated post is incomplete evidence. Do not exclude replies or choose recency versus relevance without considering where the requested signal occurs.
+
+Report source rows, qualified authors, authors actually researched, candidate profiles and confirmed matches separately, alongside the credits for each stage. A candidate in a summary is not a confirmed match. Declare candidate URL, confirmed URL, confidence and supporting evidence as configurable research outputs when review is useful; a different company can be a past role or side project, so investigate rather than treating it alone as a contradiction. Select the model from the shared AI model selector and set research limits separately. A cached replay is a reused result, not a new verification. Stop and explain a research failure using the returned error and stop reason instead of treating an empty output as not found.
+
 - Filters are exact when the source owns the fact, approximate when they rest on labels or keywords. Verify approximate ones per row; never re-check exact ones.
 - A Required role from a search index can be stale: confirm it before a paid step. A dated requirement needs a dated field.
 - Judge by meaning: a plain equivalent of a role passes. Fail a row only on evidence that contradicts a criterion.
@@ -127,3 +131,7 @@ Read the sample's actual cells, citations, failures and credits before growing t
 ## Done
 
 Report the workbook link, sample size, qualified count against the target, qualification rate, credits charged, accounts to connect, and next steps. If this document disagrees with a tool result, the tool is right.
+
+## X enrichment columns
+
+Use X profile or X recent posts with an X handle, profile URL, or user ID. X profile returns profile details and counts. X recent posts returns the latest posts and their count. X charges per profile and per post returned.

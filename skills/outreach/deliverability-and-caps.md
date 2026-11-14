@@ -12,6 +12,10 @@ Bounces, unsubscribes, suppressions and replies stop contact on every channel.
 
 A warmed mailbox sends about 30 emails a day. When a sequence needs more than the connected mailboxes can send, the answer is more mailboxes, never higher caps on the ones that exist.
 
-The workspace can buy mailboxes on lookalike domains (never its main domain), two per domain, at $7 per mailbox a month. Domains and warmup are included, and new mailboxes take about three weeks to reach full volume, so plan the sequence around the ramp.
+The workspace can buy mailboxes on a separate domain, never its main domain. Use a mix of Google and Microsoft inboxes, with two inboxes per domain. Use natural email addresses for the real sender person. Never put numbers in addresses.
 
-Buying spends money. Show the capacity gap and the purchase preview (addresses, today's prorated charge, the monthly amount and any blockers), and buy only when the user asks for it. If the preview shows blockers, explain them rather than working around them.
+Size the purchase from the total addressable market. Daily sends equal contacts multiplied by emails per contact, divided by 42. Plan for 15 cold emails per inbox per weekday.
+
+Buying spends money. Always show purchase preview with addresses, charge and blockers, then wait for approval before purchase. If preview shows blockers, explain them instead of working around them.
+
+Wait for 14 confirmed warm-up days before cold sends. Read readiness with senders.mailboxes.health_get. Use warmup_pause, warmup_resume, warmup_reactivate and warmup_disable to control warm-up.

@@ -14,6 +14,8 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 
 Post lifecycle, review, and publishing stay with the social skill. Voice comes from the channel's past videos and the workspace brand voice.
 
+Before drafting, check what has worked for this account on YouTube (format, length, hook, posting hour) with `social.content.performance_query` (group by post format, published hour or weekday, and read engagement rate, which is likes, comments, reposts and saves over impressions for the same posts at the same age and is empty when impressions are not recorded), and treat a small sample as a hint.
+
 ## Before scheduling
 
 Confirm all of these. If one is missing, say so and do not schedule.
@@ -21,6 +23,11 @@ Confirm all of these. If one is missing, say so and do not schedule.
 - The YouTube account is connected.
 - Video media is present. A title with no video is not ready.
 - The title is at or under 100 characters, the description has a chapters block, and the tags are present.
+
+## Media
+
+Exactly 1 video per post.
+Attach it with the social skill's upload flow.
 
 ## Title
 

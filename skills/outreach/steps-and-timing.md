@@ -4,7 +4,9 @@ Authorable steps are the ids `sequence.sequences.step_options` returns, and only
 
 Typical cadence: three to five touches over two to three weeks, two to five days apart, mixing channels when both are available. An email follow-up reads best as a reply in the same thread. Put the strongest message first, and make the last touch an easy way to close the loop.
 
-Use one send node per channel. Put delay_seconds inside that step, never in a separate wait for its send. Suggested order: LinkedIn or email first, WhatsApp only for warm or opted-in contacts, Instagram for creators or contacts with handles. WhatsApp needs an E.164 phone column; Instagram needs a handle. For AI copy or row variables, set fallback_template.
+Use one send node per channel. Put delay_seconds inside that step, never in a separate wait for its send. Suggested order: LinkedIn or email first, WhatsApp for contacts with phone numbers, Instagram for creators or contacts with handles. WhatsApp can message a new number. The account's daily limit and ramp up apply. WhatsApp needs an E.164 phone column; Instagram needs a handle. For AI copy or row variables, set fallback_template.
+
+Instagram also supports follow and like_recent_post steps. A private account receives a follow request. Likes target the most recent accessible post. Both share the account's daily action budget with Instagram DMs.
 
 A Slack sequence step is an internal team notification, not prospect reachability. Inspect its real schema and field options, choose a public channel from its live channel list, and provide fallback text in fallback_template for AI or row-variable copy.
 

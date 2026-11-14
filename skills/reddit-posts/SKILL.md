@@ -15,6 +15,8 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 
 Reddit is draft only: you write the title, the body and the target subreddits, and the user posts it themselves. Reddit punishes anything that reads like marketing, so write every draft as a real member of that community would.
 
+Before drafting, check what has worked for this account on Reddit (format, length, hook, posting hour) with `social.content.performance_query` (group by post format, published hour or weekday, and read engagement rate, which is likes, comments, reposts and saves over impressions for the same posts at the same age and is empty when impressions are not recorded), and treat a small sample as a hint.
+
 ## Pick the subreddit, then respect it
 
 Match subreddits to where the topic and register fit, not to size: a founder sub reads differently from a practitioner or general discussion sub. Mirror the community's language without copying posts. Tell the user to check each sub's rules and recent top posts before posting: karma minimums, required flair and self-promotion rules vary, and some subs ban self-promotion outright. With low or unknown karma, write pure value and no self-promotion.

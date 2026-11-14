@@ -12,7 +12,6 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 - Owns: judging warm-source rows and warm send caps.
 - Sequence mechanics, copy, and pacing: [`outreach`].
 - Cold lists from search sources: [`list-building`].
-- Replies on those people's posts, and list watching: [`engage`].
 - The `sequence` pack lists the tools and their exact inputs.
 
 People who already engaged are the warmest audience a business has. Capture the signal into a worksheet, keep only the ones who fit, and reach them with a message that names the signal honestly, at a pace the account can sustain.
@@ -27,7 +26,7 @@ Signals land in a workbook worksheet as a row source, with criterion columns mar
 
 ## Practice
 
-1. **Read context.** Ideal Customer and Tone of Voice in Company Context. Confirm which LinkedIn account is connected.
+1. **Read context.** Ideal Customer and Tone of Voice in Company Context. Confirm which LinkedIn account is connected. Also search what past outreach produced for this audience and channel, following the performance skill, and read the evidence before choosing the signal.
 2. **Pick one signal.**
    - Engagers on the account's own posts: highest intent, reference the post.
    - Profile viewers and new followers: warm but softer; lead with relevance.

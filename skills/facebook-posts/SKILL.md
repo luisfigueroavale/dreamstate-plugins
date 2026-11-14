@@ -14,6 +14,8 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 
 Post lifecycle, review, and publishing stay with the social skill. Voice comes from the Page's past posts and the workspace brand voice. Write like a person talking to people who already know them.
 
+Before drafting, check what has worked for this account on Facebook (format, length, hook, posting hour) with `social.content.performance_query` (group by post format, published hour or weekday, and read engagement rate, which is likes, comments, reposts and saves over impressions for the same posts at the same age and is empty when impressions are not recorded), and treat a small sample as a hint.
+
 ## Before scheduling
 
 Confirm all of these. If one is missing, say so and do not schedule.
@@ -27,6 +29,11 @@ Confirm all of these. If one is missing, say so and do not schedule.
 - Open with the point in plain speech. Short paragraphs. One idea.
 - Do not pad toward 63,206. Most posts should be short enough to read without expanding.
 - No em dashes, en dashes, or double hyphens.
+
+## Media
+
+A photo or video post carries images or video, up to 10. A text-only post needs none.
+Attach media with the social skill's upload flow.
 
 ## Links
 

@@ -49,6 +49,28 @@ Keeping a CRM in step with the workspace usually has a blueprint: HubSpot, Attio
 
 10. **Use billing and product truth from Stripe and PostHog.** Whether a company is a customer, its plan, MRR and lifetime value come from Stripe through `provider.stripe.customer_lookup`, never from a guess or an enrichment. Use it before creating a deal (an existing customer is expansion, not new business) and before any cold list or sequence touches a company (customers are excluded unless the user asked for an expansion play). MRR and lifetime value total only within one currency; a company that pays in several currencies reads currency `mixed` with per-currency totals, so never add those numbers together. Product usage, such as last seen and recent event counts, comes from `provider.posthog.person_lookup` and is evidence for a stage change or a next step, not a field to overwrite human judgement. Stripe data is read-only here: nothing in this skill changes a customer, subscription or person in Stripe or PostHog.
 
+## CRM connections (HubSpot, Attio, Salesforce)
+
+Connecting, reconnecting, and disconnecting a CRM are done by a person in Settings, Integrations. A missing permission is fixed by the person reconnecting.
+
+1. List connections with `integrations.outreach_connectors_list` and take `connection_id`.
+2. Read settings with `integrations.crm_management_get`.
+3. Read available fields and granted permissions with `integrations.crm_management_metadata`.
+4. Count before changing with `integrations.crm_management_preview`.
+5. Change import, push, or mappings with `integrations.crm_management_save`. Pass `expected_version` from the get call.
+6. Run now with `integrations.crm_management_refresh`.
+7. Read failures with `integrations.crm_management_logs` filtered to result `failed`.
+8. Retry one record with `integrations.crm_record_retry`.
+
+These tools belong to the `integrations` pack and are also listed in the `crm` pack. `crm.sync.*` schedules one object pair; `integrations.crm_management_*` holds the import rules, push rules, and field mappings.
+
+Sync rules:
+- A record deleted in the CRM is not deleted here. It is marked so it is not imported again or pushed back.
+- A contact imports even when the CRM did not grant company permission; it arrives without a company link.
+- A record that matches more than one existing record is skipped and logged, never guessed. Merge the duplicates, then retry that record.
+- Each field mapping carries its own update rule. The defaults a new connection gets: a value imported from the CRM replaces ours, and a value pushed to the CRM only fills what is empty there.
+- Push creates people in the CRM only for the audience the settings name (by default, people who replied).
+
 ## Credit posture and sensitive effects
 
 Reads, duplicate review, and timeline inspection are free and come before enrichment. For paid enrichment, state target records, fields sought, expected coverage, credit estimate, and how result will be reviewed, then run it under the paid-run consent rule. Do not enrich records merely to fill blanks.

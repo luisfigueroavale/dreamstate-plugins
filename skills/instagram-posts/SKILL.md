@@ -14,6 +14,8 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 
 Post lifecycle, review, and publishing stay with the social skill. Voice comes from the account's past posts and the workspace brand voice. Structure comes from the mode below.
 
+Before drafting, check what has worked for this account on Instagram (format, length, hook, posting hour) with `social.content.performance_query` (group by post format, published hour or weekday, and read engagement rate, which is likes, comments, reposts and saves over impressions for the same posts at the same age and is empty when impressions are not recorded), and treat a small sample as a hint.
+
 ## Before scheduling
 
 Confirm all of these. If one is missing, say so and do not schedule.
@@ -32,6 +34,11 @@ The grid and the feed cut the caption after about 125 characters. That window is
 - 3 to 8 relevant hashtags, on their own lines at the end. Skip a tag you cannot justify. Fewer honest tags beat padded ones.
 - One CTA: a comment keyword ("comment GUIDE"), a save, or the link in bio. Not all three unless asked.
 - No em dashes, en dashes, or double hyphens.
+
+## Media
+
+Up to 10 images as a carousel, or 1 video. A GIF is converted to video before it posts. A Story is exactly 1 item. No documents.
+Attach media with the social skill's upload flow.
 
 ## Carousel
 

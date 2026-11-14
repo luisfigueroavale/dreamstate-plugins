@@ -17,6 +17,8 @@ Write every LinkedIn post so it survives two moments: the feed preview and the c
 
 Before drafting, inspect collected inspiration examples when a user names a genre, topic, author, or reference style. Use only examples available to the active workspace, treat their text as structure evidence rather than copy, and say when the library has no matching classified genre. Browse curated templates when the user wants a proven structure, then adapt the selected template to the workspace evidence and voice. A template is guidance, never proof for a factual claim and never permission to copy an example.
 
+Before drafting, check what has worked for this account on LinkedIn (format, length, hook, posting hour) with `social.content.performance_query` (group by post format, published hour or weekday, and read engagement rate, which is likes, comments, reposts and saves over impressions for the same posts at the same age and is empty when impressions are not recorded), and treat a small sample as a hint.
+
 ## The fold is the whole bet
 
 The feed shows about the first 210 characters (roughly 3 lines) before "see more". That window is the hook. It has two jobs:
@@ -61,6 +63,11 @@ Every LinkedIn post ends with a real call to action unless the person explicitly
 ## Hashtags, emojis, mentions, links
 
 No hashtags or emojis unless asked (one trailing ↓ is fine when the hook promises a list that follows). Mention a person or company only when the post is about them or thanks them, and resolve every mention before scheduling. Links in the body are fine when they are the point of the post.
+
+## Media
+
+A post carries up to 9 images or GIFs, or 1 video (mp4 or mov), or 1 PDF document shown as a swipeable carousel, never mixed. An animated GIF posts as an animated GIF.
+Attach media with the social skill's upload flow.
 
 ## Never write
 

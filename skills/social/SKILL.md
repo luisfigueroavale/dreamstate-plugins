@@ -13,7 +13,6 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 - LinkedIn post copy: [`linkedin-posts`].
 - X post and thread copy: [`x-posts`].
 - Reddit post copy: [`reddit-posts`]. Articles and landing copy: [`writing`].
-- Comments and mentions on published posts: [`engage`].
 The `social` pack lists the tools and their exact inputs.
 
 ## Published-post scoring
@@ -28,11 +27,13 @@ When user says delete a social post or draft, delete it permanently from Dreamst
 
 One post is one draft that can go to several channels and several accounts at once. When the user asks for the same post on LinkedIn and X (or Reddit), create one draft whose channels list holds every channel, and put per-channel copy in that channel's payload: an X thread, a LinkedIn body, a Reddit title and subreddits. Never create one draft per channel for one request. A channel can carry several accounts (two LinkedIn profiles, or a company page and a personal profile); bind the accounts the user named, and when they said "all accounts" bind every connected account for that channel.
 
-Before drafting or scheduling, inspect connected accounts for every requested platform and whether per-post auto-engagement is available. When more than one account is connected for a platform and the user did not name an account or say all accounts, ask which named account should post. When post request is vague, also ask what type to make, offering concrete choices such as story, how-to, opinion, announcement, or carousel. When auto-engagement is available and user has not decided it, ask whether to turn it on. Put every unresolved choice in one concise question with named account and post-type choices, never an open-ended prompt. A specific request with one connected account proceeds without questions, including no auto-engagement question.
+Before drafting, read any evidence on which audience and channel responded to past outreach, following the performance skill. Answer questions about how posts performed with `social.content.performance_query`, where engagement rate is likes, comments, reposts and saves over impressions for the same posts at the same age. Before drafting or scheduling, inspect connected accounts for every requested platform and whether per-post auto-engagement is available. When more than one account is connected for a platform and the user did not name an account or say all accounts, ask which named account should post. When post request is vague, also ask what type to make, offering concrete choices such as story, how-to, opinion, announcement, or carousel. When auto-engagement is available and user has not decided it, ask whether to turn it on. Put every unresolved choice in one concise question with named account and post-type choices, never an open-ended prompt. A specific request with one connected account proceeds without questions, including no auto-engagement question.
 
-A content plan is a set of drafts, each with its channels and an optional planned date. There is no weekly plan object and no workbook or other container for a plan.
+Before any batched create, resolve each target channel account once: use the only connected account, the account the user named, or ask. Never fan out creates with a missing required input.
 
-Read the saved Company Context first, and the account's brand voice when one exists. When there is no account or no brand voice, write from the Tone of Voice page and say so. A missing account never blocks drafting.
+A content plan is a set of drafts, each with its channels and an optional planned date. There is no weekly plan object and no workbook or other container for a plan. Never put weekday or date words in titles of unscheduled drafts.
+
+Read the saved Company Context first, and the account's brand voice when one exists. When there is no account or no brand voice, write from the Tone of Voice page and say so. When an account is required to create a draft, resolve it before creating.
 
 Write with the channel skills: `linkedin-posts`, `x-posts` and `reddit-posts` hold the craft for each channel (hooks, structure, length, post types, closes). Read the one for every channel on the draft before writing its copy. The workspace can edit them, so follow the workspace copy.
 
@@ -47,6 +48,26 @@ Before scheduling, resolve every @mention for each channel. People and companies
 Read the channel registry before writing. Per-channel max_content_length is registry data. Never assume a limit. X length is weighted (a link counts 23) and each thread post is checked on its own. Reddit is draft only: write the title, body and subreddits; the user posts it.
 
 For LinkedIn, the last line must open with an ask verb or be a question addressed to the reader. Refuse the write with `linkedin_cta_required` when the close fails the rule.
+
+## Media
+
+To attach a file, request the post's `social.content.media_upload_url`, PUT the raw bytes to the returned `upload_url` with the returned headers, then call `social.content.media_uploaded`. If that returns a queued run, read the result with `runs_get` before telling the user anything. A file already at a public https URL in workspace storage can be attached by putting `{type, url, name, alt_text}` in the post's media array.
+
+A failed upload states its reason. Fix the cause and request a new upload URL. Never tell the user a format is unsupported unless the limits below say so, and never swap one media type for another (for example a video in place of a GIF) without asking.
+
+Media is replace-the-set on update: send the complete array each time. Array order is display order.
+
+Per channel:
+- LinkedIn: up to 9 images or GIFs, or 1 video (mp4 or mov), or 1 PDF document shown as a swipeable carousel, never mixed. An animated GIF posts as an animated GIF.
+- X: up to 4 images, or 1 GIF, or 1 video. No documents.
+- Instagram: up to 10 images as a carousel, or 1 video. A GIF is converted to video. A Story is exactly 1 item. No documents.
+- TikTok: images or 1 video.
+- YouTube: exactly 1 video.
+- Facebook: images or video, up to 10.
+- Threads: images or video, up to 20.
+- Reddit: draft only.
+
+Read `social.channels_list` for current limits.
 
 ## Automations
 
@@ -63,6 +84,10 @@ These automations run only when the post publishes. Setting them up sends nothin
 ## Schedule and publish
 
 Scheduling is separate from drafting: schedule only when the user asks. Publishing is outward delivery. Decide by judgment whether to confirm first; when the user already asked to publish, publish. If the server refuses and names an approval it needs (a governed workspace's reviewer pipeline, or consent for a paid or recurring run), get that approval from the person; never invent one.
+
+When the user states a cadence, map every draft in the plan to a concrete slot and schedule all in one batch. If post count and slots conflict, ask before scheduling. Read back every scheduled post and report its date and time.
+
+A scheduled long-form article is not a scheduled post: its publish time lives on a delivery attempt. Find the pending attempt with `social.content.article_deliveries_list`, then move it with `social.content.article_delivery_reschedule` or stop it with `social.content.article_delivery_cancel`.
 
 Resolve one explicit IANA timezone. Convert requested local time once into one timestamp for every channel. Never reinterpret “morning” per channel.
 

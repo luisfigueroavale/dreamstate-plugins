@@ -25,7 +25,7 @@ A play has no pack of its own. It routes across packs: `knowledge` for Company C
 
 ## Practice
 
-1. **Read the workspace.** Search first for three free, state-aware blueprint recommendations. That read uses registry requirements plus connected LinkedIn accounts, mailboxes, worksheets and credit posture. For one candidate, read the exact describe result the recommendation names next. Then read Company Context (Ideal Customer, Offer, Tone of Voice), connected LinkedIn and X accounts, existing worksheets, sequences, drafts and analytics freshness. Reuse what exists; never rebuild a worksheet or sequence that already does the job.
+1. **Read the workspace.** Also search what past outreach produced for the audience and channel, following the performance skill, before picking the play (`sequence.outreach.analytics_performance_query` for outreach, rates being people over people messaged, and `social.content.performance_query` for social). Search first for three free, state-aware blueprint recommendations. That read uses registry requirements plus connected LinkedIn accounts, mailboxes, worksheets and credit posture. For one candidate, read the exact describe result the recommendation names next. Then read Company Context (Ideal Customer, Offer, Tone of Voice), connected LinkedIn and X accounts, existing worksheets, sequences, drafts and analytics freshness. Reuse what exists; never rebuild a worksheet or sequence that already does the job.
 2. **State the plan.** Steps in order, what each produces, the credit estimate for paid steps, and the checkpoints where the user sees real output. State the estimate, then proceed under the paid-run consent rule.
 3. **Run it step by step,** loading each step's skill with skills_get. Build everything buildable even when an account is missing, then name what to connect.
 4. **Show before it leaves.** Final copy of every message or post before anything sends or publishes, and say so before switching on any daily schedule.
@@ -69,7 +69,7 @@ A play has no pack of its own. It routes across packs: `knowledge` for Company C
 - Metric: posts published per week, then comments from people who could buy.
 
 **Analyze my social media** (social-performance-review). What works and what does not.
-- Read stored analytics first and state freshness; if data is missing or stale, say which account and why.
+- Read results with `social.content.performance_query` first and state freshness; if data is missing or stale, say which account and why. Engagement rate comes from that read, never from a hand count.
 - Totals and trend over the period against the previous one, best and worst posts against the user's own median, follower change.
 - Patterns: themes, formats, length, hooks, posting days and times that win or lose, each backed by the posts that show it.
 - End with three concrete experiments for next week.

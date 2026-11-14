@@ -12,7 +12,6 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 - Owns: replies in existing email and LinkedIn conversations.
 - New conversation or cadence: [`outreach`].
 - Records and pipeline state: [`crm`].
-- Comments and mentions on the user's own posts: [`engage`].
 - The `unibox` pack lists the tools and their exact inputs.
 
 A reply is the whole point of outreach. Answer what the person actually said, in the conversation they said it in, and never restart the pitch.

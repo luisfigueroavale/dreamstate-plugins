@@ -18,7 +18,7 @@ Article creation, article updates, and native-article deliveries accept linkedin
 4. Editorial submission moves the linked artifact into review. It does not schedule or deliver.
 5. Scheduling and unscheduling act on the linked artifact id. Scheduling is reversible until delivery fires.
 6. Before creating a delivery, list configured destinations and test the chosen destination's current readiness. Never create a delivery against an unchecked destination.
-7. Delivery creation creates an attempt, not a publish. Native articles may be direct only when destination scopes allow it; content destinations are asynchronous; external copy is handoff-only. Reuse an idempotency key only for the exact same retry payload.
+7. Delivery creation creates an attempt, not a publish. Native articles may be direct only when destination scopes allow it; content destinations are asynchronous; external copy is handoff-only. Reuse an idempotency key only for the exact same retry payload. A direct native article publish created with a publish time is a scheduled delivery attempt, and that attempt, not the linked artifact, holds the time. To move it, list the article's delivery attempts, take the id of the pending attempt that carries a scheduled time, and run `social.content.article_delivery_reschedule` with the new time. To stop it, run `social.content.article_delivery_cancel` with the same id. Both work only until the attempt starts publishing, and both rehearse with a dry run.
 8. Outward publishing uses the delivery id returned by delivery creation. It is irreversible. An explicit trigger may bypass scheduled time and publish immediately, so use it only for an immediate-publish request. Show the exact final content before execution and report the returned provider receipt without constructing any identifiers.
 9. After publish, do not assume the article remains editable. If an update is refused or editability is uncertain, use the replacement path described below.
 
@@ -47,7 +47,7 @@ Article updates do not automatically create snapshots. Create a version boundary
 
 ## Duplicate, archive, and unschedule
 
-Duplication clones the article and its assets and is protected by an idempotency key. Archive removes an article from active circulation. Unscheduling withdraws a pending delivery. They are different decisions: archiving does not prove an in-flight or scheduled delivery stopped.
+Duplication clones the article and its assets and is protected by an idempotency key. Archive removes an article from active circulation. Unscheduling withdraws a pending delivery. They are different decisions. Archiving or deleting an article cancels its scheduled article publishes that have not started and reports the count as `cancelled_scheduled_deliveries`; it does not stop a delivery that is already in flight, so read the delivery attempts back before saying a publish was stopped.
 
 ## Metadata safety
 
