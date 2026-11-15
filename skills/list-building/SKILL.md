@@ -49,6 +49,10 @@ Your own customers and product users are lists too. Use them when the request is
 - Money: MRR and lifetime value are in major units and monthly. When a customer or domain pays in more than one currency, MRR and lifetime value are empty, currency reads `mixed`, and `revenue_by_currency_json` holds the totals per currency. Treat `mixed` as unsure, never as zero.
 - A Stripe or PostHog source or column needs that account connected in the integrations pack. A missing connection blocks running, never building.
 
+## Blitz sources and enrichment
+
+Blitz enrichment products generally need a LinkedIn URL. When starting with a company domain, resolve it first with Company LinkedIn URL from domain. Blitz search stops at 50,000 results, so split larger searches by employee range, then region, then title. Preview the count for free before running a source.
+
 ## Free preview before build, complete chain before paid sample
 
 Use the zero-credit source preview before workbook creation when the source permits a provider preview. That preview is a free read: `live` or `smoke_test`, not `dry_run`. Pass `definition_id`, typed `filters`, and `limit` directly. It returns named sample rows, writes no worksheet, and charges zero credits. Do not attach source or run it live merely to see first LinkedIn people rows.

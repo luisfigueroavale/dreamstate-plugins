@@ -68,6 +68,16 @@ When the user asks to enroll a list:
 - Keep filters, identity mapping, cap, and priority inside each audience. Never apply one global filter or sort across several workbooks. Use a workflow source only when entry needs logic a workbook audience cannot express.
 - When several people from one company are enrolled, turn on company pause on reply.
 
+## Exclusions for one sequence
+
+Workspace exclusions apply to every sequence by default. A rule stays on unless its id is listed in `settings.disabled_exclusion_ids`, so a rule created later is on for this sequence.
+
+To turn one exclusion off for this sequence only, read its id with `senders.suppressions.exclusions_list` and send `disabled_exclusion_ids` on the `patch` of `workflow.automations.update`. The list replaces the previous one, and an empty list turns every exclusion back on.
+
+A customer upsell or expansion sequence turns off Customers. A sequence meant for existing LinkedIn connections turns off LinkedIn connections.
+
+Unsubscribed, bounced, and manual list entries have no exclusion rule id and can never be turned off. Turn an exclusion off only when the user's goal clearly calls for it, and say that in the reply.
+
 ## Workbook rows before CRM
 
 - A worksheet row with usable channel identity and copy fields is enough to render real personalized previews and rehearse sequence launch. Do this before, and without, a separate CRM-person creation step.
