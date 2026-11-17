@@ -2,6 +2,20 @@
 
 A column answers one question about a row: what value it holds, what produces it, and which rows are worth spending on. Decide all three when you add it.
 
+## Which kind
+
+| Need | Use | Do not use |
+| --- | --- | --- |
+| Show or reshape a value already on the row | A formula. It evaluates on read and spends nothing. | An AI column, which can invent a missing fact. |
+| Judge text the row already holds | `column.ai` for an open answer, or `column.ai_fit_score` for a 0 to 100 fit score. An AI column has no web access. Asked to check a website, it answers from the row and can invent. | A research column, which is the paid web read. |
+| A fact that lives on the web, or on a page the row links | `column.research`. Output is fixed `{status, answer, evidence}`. `found` false, or an empty answer, is unknown, not a contradiction. | An AI column. |
+| Work email, phone, LinkedIn URL, company data, or verification | The enrichment skill. Resolve the definition with `tables.enrichment.catalog` and `tables.enrichment.presets_list`. | A prompt that asks a model to guess an email. |
+| One provider operation the catalog already lists | The definition `tables.executable_definitions.list_resolved` returns. Copy its add payload. | A hand-written provider name. |
+
+`tables.columns.add` writes the definition and spends nothing. It does not run the column. Price with `tables.columns.preflight` (one enrichment column, no provider call) or `tables.table_runs.preview_cost` (`estimated_credits.minimum` expected, `estimated_credits.maximum` worst case, plus `preview_id` and `expires_at`). The ceiling for the paid-run consent rule is that maximum. A BYOK lane on `tables.columns.preflight` reports `byok_platform_fee_credits_per_call`, including a successful miss. Vendor charges stay on the provider account and still need approval.
+
+A non-GET HTTP column is an external write and needs its own approval. Mirror the provider id, status, error, and synced time onto the row. Read the column back before a second run so you do not repeat a call whose first effect is still unknown (`tables.table_runs.effect_unknown`).
+
 ## Add a column
 
 - Find enrichments with the findable catalog for this worksheet; choose by the data you need, never by provider. Use the returned add call unchanged: its input bindings name existing column keys only.

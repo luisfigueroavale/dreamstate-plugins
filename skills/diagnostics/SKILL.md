@@ -11,10 +11,9 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 
 - Owns: explaining cell values, failed runs, and unsent work, including why a sequence or a lead has not sent.
 - Building or editing a sequence: [`outreach`].
-- Sources and columns: [`list-building`].
-- Reversible worksheet fixes: [`worksheet-tidy`].
+- Sources and columns: [`list-building`]. Reversible worksheet fixes: [`worksheet-tidy`].
 - Building and running automations: [`workflows`].
-The `workspace` pack lists the tools and their exact inputs.
+- The `workspace` pack lists the tools and their exact inputs.
 
 Good diagnosis answers one question with the least evidence that settles it. Pick the question, follow the object to its run, and separate "still working" from "broken".
 
@@ -24,27 +23,7 @@ Generic run controls and run records use `runs_get`, `runs_events`, and `runs_ca
 
 For questions about where credits went, call `workspace.usage.spend_breakdown` with the requested time window. Report unattributed spend and distinguish the overall total from the returned top groups.
 
-## CRM connections (HubSpot, Attio, Salesforce)
-
-Connecting, reconnecting, and disconnecting a CRM are done by a person in Settings, Integrations. A missing permission is fixed by the person reconnecting.
-
-1. List connections with `integrations.outreach_connectors_list` and take `connection_id`.
-2. Read settings with `integrations.crm_management_get`.
-3. Read available fields and granted permissions with `integrations.crm_management_metadata`.
-4. Count before changing with `integrations.crm_management_preview`.
-5. Change import, push, or mappings with `integrations.crm_management_save`. Pass `expected_version` from the get call.
-6. Run now with `integrations.crm_management_refresh`.
-7. Read failures with `integrations.crm_management_logs` filtered to result `failed`.
-8. Retry one record with `integrations.crm_record_retry`.
-
-These tools belong to the `integrations` pack and are also listed in the `crm` pack. `crm.sync.*` schedules one object pair; `integrations.crm_management_*` holds the import rules, push rules, and field mappings.
-
-Sync rules:
-- A record deleted in the CRM is not deleted here. It is marked so it is not imported again or pushed back.
-- A contact imports even when the CRM did not grant company permission; it arrives without a company link.
-- A record that matches more than one existing record is skipped and logged, never guessed. Merge the duplicates, then retry that record.
-- Each field mapping carries its own update rule. The defaults a new connection gets: a value imported from the CRM replaces ours, and a value pushed to the CRM only fills what is empty there.
-- Push creates people in the CRM only for the audience the settings name (by default, people who replied).
+CRM connection health, import rules, field mappings, and object-pair sync repair belong to [`crm`].
 
 ## The invariant
 
@@ -54,7 +33,7 @@ Read first, change second. Pending, queued, paced, capped and unknown are not fa
 
 | Question | Start from |
 |---|---|
-| Where did this value come from, or why is this cell empty? | The cell, its column, the run that settled it |
+| Where did this value come from, or why is this cell empty? | `tables.cells.inspect` for one cell, then `tables.cells.history` if the current value is not the one you expected |
 | Which rows or runs failed, and which are safe to retry? | Run history, then one run's events |
 | Why has this sequence not sent? | Sequence state, enrollment, sender, sending hours, caps |
 | Why did this worksheet cost so much, and how do I spend less? | The worksheet credit summary, then individual charged runs |
@@ -70,6 +49,22 @@ Read first, change second. Pending, queued, paced, capped and unknown are not fa
 
 Search the tool for the read you need. The search returns runnable schemas for its top hits; read any other ids together in one tools_get, then run.
 
+## Cell provenance
+
+The named read for one cell is `tables.cells.inspect`. Params are `table_id`, `row_id`, and `column_id`. Optional `run_id` or `history_id` scopes the diagnostics. Pass at most one of them. It does not rerun the cell. The result is `cell` (nullable), `run_diagnostics` (up to 200), and `execution`. `execution.state` is `not_run`, `queued`, `running`, `completed`, `failed`, or `skipped`, plus `run_id`, `run_status`, `attempts`, `completed_at`, `skip_reason`, `failure_message`, and `billing`. In `billing`, `credits_saved` and `cache_hit` are not reported. Treat them as absent, not as zero or false.
+
+Why a cell is empty:
+
+- `cell` null or `execution.state` `not_run`: the column never ran on this row, often because it was added after the row landed.
+- `skipped` with a `skip_reason`: a gate or run condition held it. Name the reason. Do not rerun until the gate input has settled.
+- `completed` with an empty value: the provider returned nothing. That is not a failure. Do not repeat the same inputs.
+- `failed`: quote `failure_message` and the `run_id`. Retry only when the failure class in the table below says a retry is safe.
+- `queued` or `running`: still working. Do not retry.
+
+`tables.cells.history` lists each stored write to that same cell, oldest first. Each event has the value before, the value after, when, who, the run id, and the provider record. `old_value` null means that write was the first one stored. Pass `next_cursor` back as `cursor`. This is the prior-value read. It is not the current value.
+
+For many cells, `tables.rows.query` joins `cell_provenance` onto each row, including `manual_override`. A true `manual_override` is a static value that wins over the formula or source. `tables.cells.read_page` carries no diagnostics, so it cannot explain an empty cell. Do not call `tables.cells.inspect` once per row of a page.
+
 For worksheet costs, discover and read the worksheet credit summary before drilling into
 runs. Its decimal total and per-column breakdown cover the entire worksheet,
 including historical executions. Check completeness and pending attempts: a
@@ -84,10 +79,34 @@ values and the visible grid window do not represent cumulative spend.
 - **Cell blocked by a daily limit:** workspace pacing, not a defect.
 - **Sequence enrolled but silent:** not started, sender not connected, outside sending hours, or caps reached.
 
+## Classify failures and refusals
+
+| Evidence | Next action |
+|---|---|
+| Transient error or 5xx | Retry only failed items after checking scope and cost. Stop after the second identical failure. |
+| Completed item with an empty value | Treat it as an empty provider result, not a failure. Do not repeat the same inputs expecting a different result. |
+| Missing input across failed rows | Repair the input before retrying the affected rows. |
+| `upgrade_required` | Explain the plan requirement and offer the upgrade path; credits alone do not resolve it. |
+| `insufficient_credits` | Check the available balance and quote; reduce scope or request a top-up. |
+| `rate_limit_exceeded` or rate limited | Wait for the returned retry time, then retry once. |
+| `approval_required` or `spend_cap_required` | Show the proposed scope, cost and ceiling and obtain the required decision. |
+| `budget_policy_exceeded` | Explain the applicable budget and request a permitted scope or policy decision. |
+| Scope denied | Identify the missing scope or connection and obtain authorized access; do not bypass it. |
+| Effect unknown | Reconcile each destination and receipt. Only replay after a human verifies every destination and the replay is safe; never replay in an unattended loop. |
+
+Before paid work, read `workspace.billing.overview` with `{}` and the applicable quote or dry-run preview. Compare the balance with the estimated scope and maximum, including retries, which can reserve and spend credits again. If the quote is unavailable, report uncertainty and use a small bounded pilot only under the paid-run consent rule. Review the pilot before expanding, and preserve the approved ceiling. A reservation is not a charge: distinguish reserved, captured and released amounts when evidence provides them.
+
+For an unknown social publish, read `social.content.artifact_get` and its deliveries, the original run and provider destination. A publishing or reconciling state is not proof of failure. Confirm the post exists or is absent at every destination before any replay; preserve the original operation identity and do not bypass a reconciliation lock. If absence cannot be proven, report the unresolved state.
+
+## Worked example
+
+A worksheet enrichment appears stuck. Read `workspace.billing.overview` with `{}` and preview `tables.table_runs.preview_cost` with `{"table_id":"33333333-3333-4333-8333-333333333333","binding_ids":["88888888-8888-4888-8888-888888888888"],"selection":{"kind":"view","view_id":"44444444-4444-4444-8444-444444444444","expected_view_updated_at":"2026-08-13T12:00:00.000Z"},"caps":{"max_credits":500}}`. Compare the returned estimate and balance, then inspect the run and failed items. If an item completed empty, report the provider miss; if it failed transiently, seek authorization for a bounded retry of failed items. Read the resulting run and cell before reporting the outcome. The example ceiling is illustrative, not an approval.
+
 ## Guardrails
 
 - Stop reading when the question is answered; do not dump every log.
-- A succeeded step with a receipt never runs again.
+- A succeeded step with a receipt never runs again. Stop after the second identical failure and report the evidence.
+- Use returned links rather than fabricating them. File feedback only with explicit consent.
 - Do not hide a defect behind another provider or a manual cell edit. Name it and give the run and object identifiers to report.
 - Cancel only a run the user wants stopped, then read its final state.
 

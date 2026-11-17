@@ -67,7 +67,56 @@ Set `scope` to `network` to see how other workspaces do on the same kind of outr
 
 ## Posts
 
-The same evidence habit applies to content. Before drafting a post, check what has worked for this account on this channel (format, length, hook, posting hour) with `visibility.analytics_rollup_get`, and treat a small sample as a hint.
+The same evidence habit applies to content. Before drafting a post, check what has worked for this account on this channel (format, length, hook, posting hour) with `social.content.performance_query`, and treat a small sample as a hint.
+
+## Worked example
+
+The user asks who to target next, and wants the reply evidence before any audience is chosen.
+
+`sequence.outreach.analytics_performance_query` with:
+
+```json
+{
+  "scope": "workspace",
+  "from": "2026-08-18T00:00:00Z",
+  "to": "2026-11-16T00:00:00Z",
+  "group_by": ["title_function"],
+  "objective": "positive_reply",
+  "message_surfaces_only": true,
+  "top_n": 25
+}
+```
+
+`from` and `to` are ISO timestamps with an offset. The window is 90 days. One dimension. `message_surfaces_only` true keeps the rate as people who replied over people who were sent a message they can reply to.
+
+Readback: each row has the people messaged and the rate. Say one line, for example "Positive replies were 9% for finance (212 people) against 3% for founders (180 people) from 2026-08-18 to 2026-11-16." A row marked `insufficient_data`, or under 30 people, is a hint. Do not recommend an audience from it. Then choose, and say which finding shaped the choice. Do not copy a past message. Omit `include_cost` unless the question is cost. When it is true, the row also carries `credits_spent`, `cost_per_outcome`, and `cost_coverage`.
+
+A post question uses `social.content.performance_query`:
+
+```json
+{
+  "from": "2026-08-18T00:00:00Z",
+  "to": "2026-11-16T00:00:00Z",
+  "group_by": ["hook_type"],
+  "metric": "engagement_rate",
+  "at_age": "7d",
+  "top_n": 25
+}
+```
+
+Readback: `rows[].posts`, `rows[].value`, `rows[].per_post`, `rows[].insufficient_data`, plus `posts_in_window`, `posts_without_metrics`, and `not_recorded`. A hook with no stored label is null. A metric named in `not_recorded` is absent. Do not fill it. A small `posts` count is a hint. `at_age` `7d` compares posts at the same age.
+
+## If it goes wrong
+
+| What came back | What to do |
+| --- | --- |
+| The query is refused | `tools_get` the schema. Fix the named field. `from` and `to` must be ISO timestamps with an offset. `group_by` is one or two dimensions. `objective` is one enum value. Do not invent a rate. |
+| Rows are empty, or people messaged is 0, or `posts_in_window` is 0 | Say there is no evidence in that window. Widen the window once. Outreach stays at least 90 days. Drop one filter if you added one. Missing evidence is not a zero rate. |
+| Every group is `insufficient_data` | Say so in one line. Continue from Company Context and the ideal customer. Do not pick a winner. |
+| `scope` `network` comes back with not enough data yet | Say so. When the row includes this workspace as `own_workspace`, lead with that number. |
+| Two variants were not split at random | `sequence.outreach.analytics_variant_compare` may still return rates. Report the people behind each rate as an observation. Do not call a winner. |
+| `not_recorded` lists the metric you asked for | That metric is absent. Choose a metric the schema lists. Do not hand-count. |
+| Post metrics look stale | This call has no `fresh` flag. State the window and `at_age`. Do not fill the gap with a hand count. |
 
 ## Cost
 

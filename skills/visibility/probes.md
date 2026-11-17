@@ -2,11 +2,11 @@
 
 ## New observations versus recomputation
 
-Search for the capability that starts a new probe run to obtain new engine answers for active prompts, as distinct from the capability that recomputes aggregates from observations already present. A refresh cannot discover a citation the engines were never asked to produce, and a probe should not be spent merely to recalculate a dashboard.
+`visibility.probe.start` obtains new engine answers for up to 20 active tracked prompts. It spends credits and follows the paid-run consent rule. `visibility.refresh` re-collects citation data on a different pipeline and cannot discover a citation this probe never asked for. `visibility.overview` and `visibility.citations` only read what is already stored. Do not start a probe to recalculate a dashboard.
 
-Before a new probe, read tracked-prompt status, active count, query-set scope, last probe time, and exact current capability contract. State engines, locales, expected run count, cost, and approval boundary. Use only engines the installed runtime reports as active; an enum accepted by a schema is not proof that a provider is supported or configured.
+Before a new probe, read `visibility.tracked_prompts.status` (active count, scope, last probe time) and the exact `visibility.probe.start` schema. State engines, locales, expected run count, cost, and the paid-run consent rule. Use only engines the installed runtime reports as active; an enum accepted by a schema is not proof that a provider is supported or configured.
 
-After start, preserve the batch id. Poll status or today's run ledger without launching another batch. Completion means expected and completed terminal runs reconcile, or the provider returns an explicit bounded/partial terminal state. Read per-prompt results and metrics only after that. A queued, inflight, or partially completed batch is not a new baseline.
+After start, preserve the batch id. Poll `visibility.probe.status` or `visibility.probe.today` without launching another batch. Completion means expected and completed terminal runs reconcile, or the provider returns an explicit bounded or partial terminal state. Then read `visibility.probe.results`. A queued, inflight, or partially completed batch is not a new baseline. `visibility.probe.recommendations` is empty while the batch is still running or the finalizer failed. Empty there is not "no improvements".
 
 ## Evidence and recommendations
 

@@ -14,7 +14,34 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 
 Post lifecycle, review, and publishing stay with the social skill. Voice comes from the Page's past posts and the workspace brand voice. Write like a person talking to people who already know them.
 
-Before drafting, check what has worked for this account on Facebook (format, length, hook, posting hour) with `social.content.performance_query` (group by post format, published hour or weekday, and read engagement rate, which is likes, comments, reposts and saves over impressions for the same posts at the same age and is empty when impressions are not recorded), and treat a small sample as a hint.
+Before drafting, check what has worked for this account on Facebook (format, length, hook, posting hour) with `social.content.performance_query` (group by post format, published hour or weekday, and read engagement rate, which is likes, comments, reposts and saves over impressions for the same posts at the same age and is empty when impressions are not recorded), and treat a small sample as a hint. `insufficient_data`, `not_recorded`, and `posts_without_metrics` are not zeros. Compare this Page only.
+
+## Decide the idea
+
+Return PASS, REPAIR, or REJECT. REPAIR names the failed gate and the proof still needed. Compare passing ideas in pairs. Do not score them from 1 to 10. A fully specified post does not stop for a vote.
+
+1. A receipt the person or Company Context supplied.
+2. A first-person claim the author lived.
+3. Useful to people who already know this Page.
+4. Specific: a period, a named event, or a before and after.
+5. One idea. Do not invent a pillar.
+6. Public-safe. A number needs a definition, a unit, a period, a source, and public-use clearance. A link must be one the person or the workspace supplied. Do not invent a destination.
+
+Facebook does not borrow LinkedIn's "always a comment CTA" rule. A link post ends when the reason to care is clear and the URL sits after that opening. A text post can end on the point. The negation pivot at most once. No slogan closer. No "The catch?" transition.
+
+## Voice and skim
+
+The person's wording wins. Read `social.brand_voice_get`. If it is empty, `knowledge.brain.context.search` then `knowledge.brain.context.get`. Missing voice does not block an edit of supplied copy.
+
+`social.content.artifact_list`, then `social.content.artifact_get` on the last two published posts for this Page. Do not repeat the same opening move. Skim line 1 and the line before the URL. Both must make sense with the link preview hidden.
+
+## Save and read back
+
+This skill writes the copy and can save the draft. Scheduling and publishing stay with social, which calls `social.content.schedule` and `social.content.delivery_publish` when the person asked to publish. `social.content.generate` spends credits. Use it only when the person asked for the paid generator, and then follow the paid-run consent rule.
+
+When this skill saves, `social.content.artifact_create` once: `channels` `["facebook"]`, `status` `"draft"`, `content` the post, and the same text in `platform_payloads.facebook.message` when you set a Facebook payload. `format` is `feed` or `reel`. If social is already saving a multi-channel draft, return the Facebook text and do not create a second artifact. If no account is bound, omit `account_ids`, set `allow_unbound_draft` to true, and say so.
+
+Read `social.content.artifact_get`. The stored message still has no URL in the opening. A 404 means the id is not in this workspace. An edit is `social.content.artifact_update` with `expected_revision` from `artifact.revision`. 409 `published_immutable` or 409 `stale_action` means stop and re-read.
 
 ## Before scheduling
 
@@ -46,8 +73,48 @@ Attach media with the social skill's upload flow.
 
 Change only what was asked. Moving a link into the first line is a mistake unless the user explicitly asked for that.
 
+## Refused save and failed readback
+
+The catalog has no Facebook privacy field. Do not invent one. `format` is `feed` or `reel` only.
+
+Media and link failures, exact strings:
+
+- "Facebook posts require text, a link, or media."
+- "Facebook link posts require an HTTP(S) link and no attached media."
+- "Facebook media requires an HTTP(S) URL."
+- "Facebook photos must not exceed 10MB."
+- "facebook publishing supports one video or up to 10 images."
+- "Facebook Reels require one video."
+
+`channel_media_too_many` and `channel_media_kind_unsupported` name the channel limit. A reel is `format` `reel` plus one video. Fix the same artifact with `social.content.artifact_update`. Do not create a second one.
+
+A 404 from `social.content.artifact_get` means list with `social.content.artifact_list` first. 409 `published_immutable` or 409 `stale_action` means stop and re-read. If the stored message puts a URL in the opening, report the stored text and patch once with `expected_revision`.
+
 ## Check it works
 
-Read the saved draft back. Confirm the account, media when the post needs it, the length, that the opening has no URL, and that nothing contains an em dash.
+Read the saved draft back. Confirm the account, media when the post needs it, the length, that the opening has no URL, that every number was supplied, and that nothing contains an em dash. If you saved, `social.content.artifact_get` matches.
+
+## Worked example
+
+Supplied link: `https://example.com/opener`. Supplied fact: the opener booked 4 meetings between 12 and 22 March. The person did not ask for a comment CTA.
+
+Bad post:
+
+```
+https://example.com/opener
+We 10xed replies. It's not the tool. It's the mindset.
+```
+
+Fixed post:
+
+```
+The opener named the missed reply, and it booked 4 meetings between 12 and 22 March.
+
+https://example.com/opener
+```
+
+The bad post puts the URL first, invents "10xed", and uses a negation pivot with no receipt behind it. The fix leads with the supplied result. The link is on its own line after that sentence. No extra ask.
+
+Save: `social.content.artifact_create` with that `content`, `channels` `["facebook"]`, `status` `"draft"`. Read back with `social.content.artifact_get` and confirm the first line is not a URL.
 
 Paid and outward runs follow the paid-run consent rule.

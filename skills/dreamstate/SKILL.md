@@ -9,11 +9,17 @@ Dreamstate is reached through its MCP server. Its tool list is the door, not the
 
 Prefer the narrower `dreamstate:*` skill for the job when one fits; `skills_get` returns the workspace's current copy of any skill.
 
+Skills (skills_list for details): knowledge, list-building, outreach, social, linkedin-posts, x-posts, instagram-posts, tiktok-posts, youtube-posts, facebook-posts, reddit-posts, visibility, workflows, writing, inbox-replies, plays, diagnostics, worksheet-tidy, crm, linkedin-warm-signals, skill-authoring, performance, setup, enrichment, gtm-consultant, deliverability, collaboration, custom-http, clay-migration
+
+Named tools such as `context_resolve`, `crm_search` and `tasks_create` each run one capability under the same `tools_run` rules.
+
 1. `whoami` names the user and the active workspace. If it lists several workspaces, confirm the right one before writing anything.
-2. `packs_route` maps a goal to a domain; `packs_get` returns that domain's capabilities and skills.
-3. `tools_search` finds the capability for the goal; `tools_get` returns its exact input schema. Read the schema every time, never guess params from memory.
-4. `tools_run` runs it with `capability_id` and `params`. The gating inputs (`mode`, `max_credits`, `idempotency_key`, `quote_hash`, `approved`) go on the run call itself, never inside `params`. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` goes inside `params` only when the fetched capability schema declares it (for example, a one-contact workflow run). Sequence start, resume, launch and enrollment do not accept it; they have no lifetime send ceiling.
-5. `runs_get` follows long work; `runs_events` and `runs_list` read more of it and `runs_cancel` stops a run.
+2. `context_resolve` with `purpose` `setup` returns the knowledge index first, then the Company Context pages, profile, ICP, score rubric and setup checklist. Read the index before opening any page.
+3. `skills_get` with id `setup` when Company Context, the ICP or the score rubric is missing. The agent runs setup itself: it writes the knowledge pages, the ICP and the score rubric, drafts a first workbook and sequence without sending, and hands over connect links. Running it again is safe.
+4. `packs_route` maps a goal to a domain; `packs_get` returns that domain's capabilities and skills.
+5. `tools_search` finds the capability for the goal; `tools_get` returns its exact input schema. Read the schema every time, never guess params from memory.
+6. `tools_run` runs it with `capability_id` and `params`. The gating inputs (`mode`, `max_credits`, `idempotency_key`, `quote_hash`, `approved`) go on the run call itself, never inside `params`. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` goes inside `params` only when the fetched capability schema declares it (for example, a one-contact workflow run). Sequence start, resume, launch and enrollment do not accept it; they have no lifetime send ceiling.
+7. `runs_get` follows long work; `runs_events` and `runs_list` read more of it and `runs_cancel` stops a run.
 
 Lists, finds, enrichments and signals happen only inside a workbook worksheet. Report only what tools returned.
 

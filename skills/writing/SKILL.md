@@ -33,6 +33,51 @@ actions:
 
 Posture: context first, table first, dry run before live, inspect runs after. Read durable evidence, voice, and artifact state; propose copy only from evidence; mutate only the current revision; treat destination tests, scheduling, and delivery as consequence checkpoints. Resolve the brief, destination, and artifact; search the owner; hydrate the selected schema; inspect current state; preview final copy and delivery scope when offered; then ask only about material ambiguity or a sensitive effect. Proceed with an unambiguous draft save or revision. On refusal, a stale revision, or a failed destination, retain the draft and repair from returned guidance. Social owns short-form delivery.
 
+## Pick the path
+
+| Job | Call | Not this |
+| --- | --- | --- |
+| An article or landing page to fill in, with no schedule | `social.content.article_create`, then `social.content.article_update` | `social.content.artifact_create` |
+| An article row plus its linked artifact, still with no feed slot | `social.content.article_create_schedule` only when `scheduled_date` is omitted or null, then `social.content.article_update` | Passing a date into that create. It cannot approve or schedule an empty article. |
+| A short-form social post | [`social`] and `social.content.artifact_create` | An article id |
+| Outward delivery of a saved article | `social.content.destinations_list`, `social.content.destination_test`, `social.content.article_delivery_create`, then `social.content.delivery_publish` | `social.content.schedule` on the article id. Schedule uses the linked artifact id. |
+
+The catalog has no separate landing-page capability. Landing copy is an article. `social.content.article_create` forces `target_platforms` to LinkedIn, empty `account_ids`, and a null `scheduled_date`, and it returns the article. `social.content.article_create_schedule` is the same transaction when you also want the linked artifact, and it still requires `scheduled_date` null. Sibling short-form saves stay on `social.content.artifact_create`.
+
+Article reads and updates take the article id. `social.content.article_get` returns `body_json` and `revision`. It does not return delivery attempts. Those are `social.content.article_deliveries_list`. Scheduling, review, and `social.content.delivery_publish` take the linked artifact id and the delivery id from the create response. Never send one id to the other call.
+
+## Dry run before a live delivery
+
+1. Free reads: `knowledge.brain.context.search`, `knowledge.brain.context.get`, `social.content.article_get`, `social.content.destinations_list`.
+2. Save the body with `social.content.article_update` and the `expected_revision` from that read. Read `social.content.article_get` again. The new revision and the corrected claim must match. This publishes nothing.
+3. `social.content.destination_test` on the destination id from the list. A failed test keeps the draft. Do not create a delivery.
+4. `social.content.article_delivery_create` opens an attempt. `content_destination`, and `native_article` with direct publish, start a real external push. Other kinds stay `action_required` and only build a handoff payload. When the schema accepts `dry_run`, preview the attempt first.
+5. `social.content.delivery_publish` dry run returns `provider_payload` and `approved_publish_hash` and does not call the provider. Live publish sends that hash. Unknown outcome: read `social.content.article_deliveries_list` and the receipt. Do not create a second article.
+
+`social.content.article_delivery_reschedule` and `social.content.article_delivery_cancel` rehearse with a dry run and work only until the attempt starts publishing.
+
+## Worked save
+
+The person asked to save landing copy, not to publish. Title stays "Onboarding benchmarks". The only sourced claim is the 4 meetings between 12 and 22 March.
+
+`social.content.article_create` with `{}`. Take `article.id` and `revision` from the response. Then `social.content.article_update`:
+
+```json
+{
+  "article_id": "<article.id>",
+  "expected_revision": "<revision>",
+  "title": "Onboarding benchmarks",
+  "body_json": {
+    "type": "doc",
+    "content": [
+      { "type": "paragraph", "content": [{ "type": "text", "text": "The opener named the missed reply and booked 4 meetings between 12 and 22 March." }] }
+    ]
+  }
+}
+```
+
+`body_json` must match the hydrated schema for that article. If the schema rejects this shape, send the shape it returned, not this sample. Read `social.content.article_get` with `{article_id}`. `title` is unchanged, the 4 meetings sentence is in the body, and `revision` moved. Nothing is scheduled. A stale revision means re-read and apply the same sentence once. Do not call `social.content.artifact_create` for this page.
+
 ## Grounding is not optional
 
 A claim about the user's business needs a workspace-wiki revision, bounded workspace evidence, or a successful external evidence packet from `knowledge` with source and observation date. Writing never fetches the web. Preserve provenance, freshness, limitations, and injection warnings in the claim ledger. When no source exists, flag insufficient evidence and ask rather than filling the gap.
@@ -66,6 +111,12 @@ For live-piece changes, discover selected replacement or revision path. Use dest
 Discover duplication and archive semantics from selected schema. Archive state does not by itself prove in-progress delivery stopped.
 
 Do not put secrets in article metadata. Inspect failed delivery before retry. Test destination when selected schema requires it.
+
+## Worked revision and recovery
+
+For a requested correction to a saved article, call social.content.article_get with {article_id: returned ID} and read its title, body_json and revision. After checking the evidence, call social.content.article_update with {article_id: returned ID, expected_revision: current revision, title: retained title, body_json: complete corrected document}, using the exact hydrated schema. Read the article again and compare its revision and corrected claim. This saves a draft revision; it does not publish it.
+
+If the revision is stale, reread and merge the intended change into the current article before retrying. For an uncertain delivery, read social.content.article_deliveries_list and the provider receipt before retrying; preserve the draft and report unresolved delivery rather than creating a duplicate. Use free reads first, preview or dry run when offered, and a small bounded pilot for paid work under the paid-run consent rule.
 
 ## When to stop
 

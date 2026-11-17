@@ -12,15 +12,15 @@ For each sending step, decide row variables first. Write fallback message before
 
 Merge fields are the enrolled worksheet's columns. Before copy greets someone by first name, check that the worksheet has a first name column. If it does not, add a visible `first_name` formula column with `FIRST_NAME({{name}})` through `tables.columns.add` (it runs no paid work), then write `{{first_name}}`. Derive any other short slot the copy needs the same way, as a visible formula column, before drafting.
 
-Write in the workspace voice from its message writing notes. Short beats long: one idea per message, one clear ask. A follow-up refers back to the earlier touch instead of restarting the pitch. Each message still makes sense if it is the only one the person reads.
+Write in the workspace voice from its message writing notes. Short beats long: one idea per message, one clear ask. A cold first email stays at or under 75 words and aims under 50. Each cold follow-up stays at or under 40 words. The first email asks for a reply that gets them something concrete and free. Do not ask for a meeting or send a calendar link in that first email. A follow-up refers back to the earlier touch instead of restarting the pitch. Each message still makes sense if it is the only one the person reads.
 
 When the user asks to change one step, change only that step and leave the others untouched. Validate after every copy change.
 
 ## Personalize from the signal that found them
 
-Every message should only make sense for this one lead. Name and company alone fit anyone, so each sending step carries the signal the list was built from:
+Every message should only make sense for this one lead. Name and company alone fit anyone, so each sending step carries one public signal from the row. Public signals may be named: hiring, funding, a public post, a job change. Private signals are never named: a profile view, a website visit, a private like or comment, or any line that says how the lead was found.
 
-- Hiring lists: say what they are hiring for. "Saw {{company}} is hiring an {{matched_job}} in San Francisco" beats "saw you're hiring". Use the job title column the source returned, and connect it to why your offer matters for that hire.
+- Hiring lists: say what they are hiring for. "Saw {{company}} is hiring an {{matched_job}} in San Francisco" is a public signal and is allowed. "Saw you're hiring" is too thin. "Saw you viewed our profile" is a private signal and is blocked. Use the job title column the source returned, and connect it to why your offer matters for that hire.
 - People who posted about a need: refer to what they actually wrote, in a few words. "Your post about replacing your sales tool" beats "your recent post".
 - Role or company lists (VPs of Sales at YC startups): use what is specific to them, such as their batch, what the company sells, its stage or team size, or something they shipped.
 
@@ -33,7 +33,7 @@ Each follow-up brings a new reason to reply (a relevant result, a short resource
 ## Check the copy like a reviewer before publishing
 
 Before publishing or enrolling, preview at least three different real rows, including one with the thinnest evidence, and judge each rendered message as pass, tighten or block:
-- Block: an unresolved or empty variable, a claim the row does not support, a fact about the lead that is wrong, or anything that reveals how they were found.
+- Block: an unresolved or empty variable, a claim the row does not support, a fact about the lead that is wrong, a private signal, or any line that reveals how they were found (a profile view, a site visit, a private engagement, a scrape). Naming a public signal the row holds, such as the open job, the funding, or their public post, is not a block.
 - Tighten: the message would read the same for another company, the opener is generic, a follow-up repeats an earlier step, the ask is unclear, or it runs long.
 - Pass: specific to this person, grounded in their row, one clear ask.
 If the rendered messages across rows read nearly identical apart from the name, the signal slot is too thin: strengthen the evidence column or the AI step prompt, not one row's copy. Fix every block and tighten, preview again, and say in the report what you checked.

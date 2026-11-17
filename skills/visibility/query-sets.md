@@ -8,7 +8,9 @@ Every prompt must be natural enough that a real buyer could ask it, specific eno
 
 ## Prepare, review, save
 
-Search for the capability that prepares candidate prompts; it does not persist them. Review candidates for duplicates, leading brand bias, unsupported locales, and coverage gaps. A separate capability persists the chosen batch, another adds one explicit prompt, and another revises one exact prompt, each discoverable by its own input schema. Read the set back after saving and report the stable ids and active count.
+`visibility.tracked_prompts.list` and `visibility.tracked_prompts.status` are the current set. `visibility.keywords_get` is Search Console. `state` `not_connected` or `auth_expired` means not measured, not zero traffic. `visibility.geo_queries_list` is a different table from tracked prompts.
+
+`visibility.tracked_prompts.generate` returns candidate drafts and saves nothing. It spends credits and follows the paid-run consent rule. Review candidates for duplicates, leading brand bias, unsupported locales, and coverage gaps. `visibility.tracked_prompts.create` adds one prompt and leaves the rest. `visibility.tracked_prompts.update` revises one. `visibility.tracked_prompts.save` replaces the set: prompts you omit are deactivated, and inactive prompts that were never probed are deleted. Use `save` only when that replacement is the request. Read back with `visibility.tracked_prompts.list` and report the stable ids and active count. Tags that start with `cat:` are dropped on create.
 
 Do not generate a new set because metrics are weak. Weak results may be the finding. Revise the measurement instrument only when audience, market, language, product, or question taxonomy changed, and record the reason and effective date.
 

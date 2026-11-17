@@ -13,6 +13,8 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 - Drafting and publishing articles: [`writing`].
 - The `visibility` pack lists the tools and their exact inputs.
 
+Capturing LinkedIn engagers and other warm signals belongs to [`linkedin-warm-signals`].
+
 Improve discoverability and qualified organic traffic in traditional search and in generative answer engines, as one practice. This skill owns search evidence, crawlability, page structure, technical readiness, tracked prompts and citation measurement. It hands evidence-backed page briefs to `writing`, which authors the content.
 
 ## Operating contract
@@ -49,11 +51,37 @@ The tracked query set is a revisioned instrument: changing a prompt's wording br
 
 ## GEO answer worksheet
 
-Use `source.geo_ai_answers` for a `content` worksheet when prompts need direct ChatGPT and Google AI Overview evidence. Bind prompts, brand details and competitors. It creates one row per prompt, engine and day. Rerunning same day is free, so read existing rows before starting another run.
+For direct answer-engine evidence in a workbook, discover the current worksheet source and its exact schema before binding prompts, brand details and competitors. Read existing rows and their freshness before commissioning another run.
 
 ## Handoff to writing
 
 A brief names the target query and intent, the evidence window and property, current and previous performance, the destination page or a new page, observed competing results, the conversion goal, internal links, and evidence gaps. When an existing page owns the intent, request a revision instead of a duplicate.
+
+## Pick the path
+
+| Question | Call | Not this |
+| --- | --- | --- |
+| What is already measured | `visibility.overview`, `visibility.citations`, `visibility.analytics_query`, `visibility.report_get` | `visibility.probe.start` |
+| New answer-engine observations | `visibility.tracked_prompts.status`, then `visibility.probe.start` under the paid-run consent rule, then `visibility.probe.status` until terminal, then `visibility.probe.results` | `visibility.refresh`. That call re-collects citation data on a different pipeline. |
+| Crawl, robots, speed, or page HTML | `visibility.workspace_site_get`, `visibility.sitemap_get`, `visibility.seo.robots_audit`, `visibility.pagespeed_get`, `visibility.html_analysis_get` | A probe, and a claim that one passing check is site health |
+| Change the query set | `visibility.tracked_prompts.generate` does not save. `visibility.tracked_prompts.create` adds one. `visibility.tracked_prompts.save` replaces the set. | Saving a generated list with `save` when you only meant to add one |
+| A stored report | `visibility.report_generate` writes a new row. `visibility.report_get` reads it. `visibility.reports_list` is metadata only. | Treating the generate receipt as the rendered report |
+
+Layer detail is in [probes.md](probes.md), [query-sets.md](query-sets.md), and [technical.md](technical.md).
+
+## Worked report and recovery
+
+For an existing probe, read visibility.workspace_site_get with {} and visibility.tracked_prompts.status with {}. Read visibility.probe.status and visibility.probe.results with {batch_id: returned batch ID}. Once terminal, report the site, prompt revision, engine, locale, window and completed versus expected runs. For example, three citations from ten completed comparable runs is 30%; zero completed runs is unavailable. Name the weakest prompt and give writing an evidence-backed page brief.
+
+If the batch is running, wait and reread instead of presenting the start receipt as a finding. If it fails or is partial, inspect the error and completed evidence, report coverage, and correct the identified cause before considering another run. Prefer free reads, then a dry run or preview when available, followed by a small pilot with an explicit ceiling and approval under the paid-run consent rule. Never infer a missing result is zero.
+
+## Second report: crawl, not a new probe
+
+The person asked what blocks discovery. Do not start a probe.
+
+`visibility.workspace_site_get` with `{}`. If `site` is null, `visibility.workspace_site_ensure` is the create, and there is nothing to audit until a domain exists. With a domain, `visibility.sitemap_get` with `{}`. Trust `sitemap.ok`. `sitemap.ok` false with `fetch_failed` or `parse_failed` is a failed fetch, not an empty site. `visibility.seo.robots_audit` fetches robots.txt and returns `bots[]` with `status` `allowed`, `blocked`, `not_applicable`, or `error`. It never edits the file. `visibility.pagespeed_get` with `{}` is the cached audit. `is_stale` true means a side is missing or older than 25 hours. Refresh with `visibility.site_scan` only when that cache cannot support the decision. `visibility.html_analysis_get` is the cached homepage parse. It is null when no brand site is configured.
+
+`visibility.citations` with `{}` is the stored citation merge. It does not collect. `visibility.report_generate` stores a new growth report and does not email it. `visibility.report_get` with the returned report id is the readback. `payload` is the report. `visibility.reports_list` does not include that payload. Say which checks ran, which were stale, and that no probe was started.
 
 ## Done
 

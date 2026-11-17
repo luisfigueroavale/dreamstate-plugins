@@ -11,13 +11,40 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 
 Owns: sources, columns, criteria, and building qualified lists.
 - Multi-step outreach sequences: [`outreach`].
-- Existing worksheet structure and values: [`worksheet-tidy`].
+- Existing worksheet structure and values: [`worksheet-tidy`]. Waterfall columns and one-record enrichment: [`enrichment`].
 - Durable customer and company records: [`crm`]. Warm sources: [`linkedin-warm-signals`].
 - What past outreach produced for an audience: [`performance`].
 - Explaining cell values and failed runs: [`diagnostics`].
 The `tables` pack lists the tools and their exact inputs. When user says delete, permanently delete named workbook, worksheet, template, automation, contact, row, or column after reviewing removal impact and setting the commit field. When user says archive, archive only. Never say permanent deletion is unavailable.
 
 A list is worth contacting when every row would recognise itself in the reason you contact it. Find the smallest set where that is true, prove it on each row, and stop.
+
+## Pick the path
+
+| Ask | Where the rows come from | First calls |
+| --- | --- | --- |
+| Company list: firmographics, a TAM, lookalikes, hiring companies | One company worksheet and one company source | `tables.executable_definitions.list_resolved`, then `tables.sourcing.filters`, then `tables.sourcing.preview` |
+| People list: a role, a place, or people at named companies | A people source only when that definition declares every Required company fact. Otherwise companies first, then `tables.worksheets.create_fan_out_destination` | Same preview, on the source you will actually attach |
+| Signal list: hiring, funding, post engagers, followers, profile viewers, X posts | One worksheet source. Capture stays here. A score or today's leads belong to crm. Auto-enroll belongs to outreach | Exact blueprint via `workspace.blueprints.recommend`, or the ready definition from `tables.executable_definitions.list_resolved` |
+| Import: the user already has the rows | CSV or a URL of rows. Not a search | `tables.table_sources.csv_import_prepare` or `tables.table_sources.url_import_preview` |
+
+Do not use this skill to enrich rows you already have ([`enrichment`]), to send ([`outreach`]), or to merge records (crm). A signal list is not a cold people search. An import is not a preview of a provider.
+
+Source choice, in this order:
+
+1. Import when the rows already exist. Verify the staged count with `tables.rows.query` before any paid column.
+2. A signal source when the hardest Required criterion is attention or a public event. One source on the worksheet. Install a blueprint only when it is an exact match, including every Required filter.
+3. A people source when `tables.executable_definitions.list_resolved` returns a ready definition that declares every Required person fact and every Required company fact.
+4. Companies first when the people source does not declare headcount or industry. Qualify the companies, then fan out.
+5. Stop after one empty `tables.sourcing.preview` that you have already loosened once. A second source is not a way to hide an empty preview.
+
+Sample size:
+
+- `tables.sourcing.preview` is the quality check. A target or a sample length is not a market size. Quote a count only when that preview returns one.
+- The user named a target. The first paid run is a sample small enough to read row by row. Scale the same source in bounded batches toward the target. Over-provision about 1.4 times the target only on that scale step, and only because later criteria drop rows.
+- The user named no target. The first paid sample is about 25. Read every row. Ask how far to grow only after that sample settles.
+- Under about 30 percent qualified, name the Required criterion that fails most and propose one change. Under about 10 percent, change the source.
+- A preview that returns nothing: loosen one filter and preview again. If it is still empty, the source cannot express the request.
 
 ## Rows and qualified rows
 
@@ -37,6 +64,10 @@ For people engaging with competitor company posts, `signal-engaged-company-posts
 
 For incoming messages or booked meetings, read Incoming people sources (`incoming-people.md`). Use `signal-received-dm` for Received DM plus AI fit score, or `signal-meeting-booked` for Meeting booked plus profile enrichment. Each installs exactly one people worksheet and two columns. Qualification follows the user's rubric, which may describe sales pitches, support requests, or another purpose. These sources do not require the general prospecting enrichment and email chain below.
 
+Signal capture is a worksheet source. Post engagers, followers, profile viewers, hiring searches, funding searches, and profile watchers land as rows on a worksheet in this skill. Reading a score, a signal level, or today's leads belongs to crm. Auto-enroll belongs to outreach. Name a public signal in cold copy (hiring, funding, a public post, a job change). Never name a private one (a profile view, a website visit, who engaged privately).
+
+A first session in a workspace where nothing is built yet belongs to the setup skill. The id first-win only aliases setup. This skill starts when the user asks for a list, including the sampled list that setup requests.
+
 ## Customer and product sources (Stripe, PostHog)
 
 Your own customers and product users are lists too. Use them when the request is about expansion, upsell, win-back, product-qualified leads, or keeping customers out of a cold list.
@@ -55,7 +86,7 @@ Blitz enrichment products generally need a LinkedIn URL. When starting with a co
 
 ## Free preview before build, complete chain before paid sample
 
-Use the zero-credit source preview before workbook creation when the source permits a provider preview. That preview is a free read: `live` or `smoke_test`, not `dry_run`. Pass `definition_id`, typed `filters`, and `limit` directly. It returns named sample rows, writes no worksheet, and charges zero credits. Do not attach source or run it live merely to see first LinkedIn people rows.
+Use the zero-credit source preview before workbook creation when the source permits a provider preview. That preview is a free read. Door modes `dry_run` and `live` both execute it and charge zero. Pass `definition_id`, `source_inputs` for that source contract, optional `table_id`, and `limit` from 1 to 10. Unknown top-level keys are rejected. It returns named sample rows, writes no worksheet, and charges zero credits. Do not attach a source merely to see the first rows.
 
 Before first paid source run, configure every run condition, Required qualification column, AI fit-score column, and requested work-email preview column. Adding/configuring columns is free. First paid sample must land into chain already able to qualify source rows and gate later spend. Read every configured column back before source run. A source-run warning `qualification_columns_missing` means stop and configure the chain before spending.
 
@@ -79,6 +110,7 @@ Run conditions as filters:
 - Chain them: each paid column's condition includes every earlier Required criterion it depends on, so a disqualified row stops costing anything.
 - Exclude rows that failed, not rows that are still unsure, unless the column is only worth running on qualified rows (contact data, emails): those require a pass.
 - Order columns cheapest and most selective first: free formulas and exact fields, then enrichments, then judgment columns, then contact data.
+- When a waterfall returns the data a column needs (work email, phone, people at a company), add the waterfall, not one of its single-provider steps: it tries every enabled provider in workspace order and stops at the first verified match. Use a single provider only when the user names it or the waterfall cannot take the row's inputs, and say which.
 - Read the column back after saving and confirm the condition is there.
 - Research column shape, fixed output: read `column-authoring.md`, Research columns.
 
@@ -126,11 +158,40 @@ Report source rows, qualified authors, authors actually researched, candidate pr
 
 ## Gates
 
-- A paid run's ceiling is its preview's maximum. Run it under the paid-run consent rule.
-- A refusal names what to fix: fix that input and retry, three times at most, then report it.
+- A paid run's ceiling is the preview maximum from `tables.table_runs.preview_cost` (`estimated_credits.maximum`) or from `tables.columns.preflight`. Run it under the paid-run consent rule. A hand-picked lower ceiling can skip pricier waterfall lanes and still bill the cheaper ones. `estimated_credits.minimum` is the expected band, not a ceiling you may shrink to.
+- An unknown estimate is a one-row pilot, never a free run. Stop the batch when the pilot's yield is below the coverage that quote priced. Do not retry-patch misses: a completed empty cell is an answer. Read `tables.table_runs.effect_unknown` before any retry. Those receipts are not safe to retry automatically.
+- `tables.columns.run` returns when the run is queued. Queued is not spent. `tables.table_runs.cancel` needs the run's current `state_version` and a reason. Status `cancelled` stopped immediately. Status `cancellation_pending` is recorded and the worker has not observed it yet. Work already dispatched is not recalled, and credits already spent are not refunded.
+- Compare balance with `workspace.usage.status_get` against unit cost times scope before a live batch. If the balance cannot cover `estimated_credits.maximum`, stop and say so.
+- A refusal names what to fix: fix that input and retry, three times at most, then report it. A refusal is an answer. Do not silently substitute another source or provider.
+- A sourcing approval covers the pull only. Enrichment, CRM writes, and outreach on the landed rows are separate approvals. A new schedule (`tables.table_sources.schedule_set`) or a higher standing ceiling is a second approval. Changing cadence asks again.
 - A missing account blocks running, never building: build everything and say what to connect.
-- Never invent a count. Never delete rows unless the user asks.
+- Never invent a count. Quote a match count only when `tables.sourcing.preview` returns one, and name that preview. When the preview says free preview is unavailable, report that and the smallest paid sample cost it returned. A target or a sample length is not a market size.
+- Never delete rows unless the user asks. Removal is below.
 - Keep email, LinkedIn URL and company domain columns on people rows so do-not-contact matching works.
+
+## Remove rows
+
+Read the matching rows first with `tables.rows.query` (same worksheet, same filter, the columns you will judge). Delete that same set with `tables.rows.bulk_delete`: pass those `row_ids`, or one `selection_snapshot_id` from `tables.selection_snapshots.create`, and `confirmed: true`. An unqualified delete of every row is not this step. Read the survivors with `tables.rows.query`. The receipt is the check. `tables.rows.restore` clears `deleted_at` on one row and does not recover a cell that was removed separately. Removed values stay readable with `tables.rows.history`. Deleting rows does not stop sequence enrollment.
+
+## If the source or the column fails
+
+The attach, preview, dry run, and live params are in [sourcing.md](sourcing.md). Which column kind answers the question is in [column-authoring.md](column-authoring.md). What to cite after the run is in [readback.md](readback.md). Waterfall enrichment of rows you already have is [`enrichment`], after Required criteria have passed.
+
+| What came back | What to do |
+| --- | --- |
+| `tables.sourcing.preview` returns no rows | Loosen one filter. Preview again. Do not attach. |
+| The preview says free preview is unavailable | Report that and the smallest paid sample cost it returned. Do not invent a count. |
+| Warning `qualification_columns_missing` | Stop. Configure the chain. Do not spend. |
+| The source drops a filter | Report that filter by name. Keep the criterion as a run condition. Do not say the source applied it. |
+| `tables.table_runs.wait` returns `timed_out` true and `terminal` false | The run is still open. A count is unknown, not zero. Wait again. |
+| `tables.table_runs.get` shows `checkpoint.resumable` true | `tables.table_runs.resume` continues the remaining work and does not redo completed units. It needs the current `state_version`, the checkpoint token, and an idempotency key. It spends again for the remainder, under the paid-run consent rule. |
+| The run failed and it has no checkpoint | `tables.table_runs.failure_report` is the per-row detail (`error_category`, `retryable`, `why`). `tables.table_runs.retry` starts a fresh run of the same binding, spends again, and reuses nothing. Its returned `run_id` is the original run id, so poll `tables.table_runs.get`. Do not retry when a checkpoint exists. Use resume. |
+| `error_category` `configuration` or `credentials` | Fix the named input or connect the account the run named. A missing account blocks running, not building. |
+| `error_category` `budget` | Read `workspace.usage.status_get`. If `credits_remaining` is below `estimated_credits.maximum`, do not start another batch. |
+| `tables.table_runs.effect_unknown` lists the run | Do not retry and do not resume. Those receipts are still calling or have an unknown outcome. |
+| A completed cell is empty | That miss is the answer. Do not patch it from a similar row. |
+| Some rows succeeded, some failed, some are empty | Read `tables.table_runs.get`, `tables.table_runs.failure_report`, and `tables.cells.read_page`. Report the four outcomes separately. Do not call the run complete. |
+| A refusal names an input | Fix that input and retry, three times at most. Do not swap the source or the provider. |
 
 ## Done
 

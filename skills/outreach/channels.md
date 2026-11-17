@@ -2,7 +2,7 @@
 
 LinkedIn messages, emails, WhatsApp, Instagram and X for the same people belong in one sequence, one view and one launch. All channels share one contact history, so a reply, bounce or unsubscribe on one channel stops the others.
 
-WhatsApp and Instagram use connected own Unipile accounts. Ramp sends and honor account caps. Ban risk exists. WhatsApp needs a phone column in E.164 format. Instagram needs an Instagram handle. WhatsApp can message a new number. The account's daily limit and ramp up apply. Use Instagram for creators or contacts with handles. A reply on either channel stops enrollment.
+WhatsApp and Instagram use connected own Unipile accounts. Ramp sends and honor account caps. Ban risk exists. WhatsApp needs a phone column in E.164 format. Instagram needs an Instagram handle. WhatsApp may message a number this workspace has never messaged only after the user gives explicit permission for that number. Name the number and the ban risk, and wait for that yes. A general yes to start the sequence is not permission for a new number. Without it, do not start the WhatsApp step. Read the account ramp and daily cap with `senders.whatsapp_accounts.list` before the start. Use Instagram for creators or contacts with handles. A reply on either channel stops enrollment.
 
 An X DM step sends to any lead with an X handle or user ID and checks deliverability first. The default is 20 DMs per account per day, maximum 30, with 10 to 20 minutes between sends by default. Warm up applies. X follow is unavailable.
 X total actions are limited to 450 per account per day.

@@ -3,7 +3,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "^mcp__(?:plugin_dreamstate_dreamstate|dreamstate)__(?:packs_get|packs_list|packs_route|runs_events|runs_get|runs_list|skills_get|skills_list|tools_get|tools_search|whoami)$",
+        "matcher": "^mcp__(?:plugin_dreamstate_dreamstate|dreamstate)__(?:billing_overview|context_resolve|crm_leads_today|crm_record_get|crm_score_explain|crm_search|home_overview|inbox_list|knowledge_get|knowledge_index|knowledge_search|packs_get|packs_list|packs_route|runs_events|runs_get|runs_list|sequences_list|setup_checklist|skills_get|skills_list|sourcing_preview|tasks_list|tools_get|tools_search|whoami)$",
         "hooks": [
           {
             "type": "command",

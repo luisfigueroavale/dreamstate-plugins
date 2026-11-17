@@ -46,6 +46,21 @@ Every change lands on the current revision and is reported back. Never overwrite
 - One thesis line, the invariant, a short numbered practice, guardrails, and what to return.
 - Keep SKILL.md to about 5 KB. Put detail, examples and edge cases in supporting .md pages in the same folder and say when to read each one.
 - Teach practice, not tool grammar. Describe the task and let tools_search and tools_get supply exact names and fields.
+- The first section after the title is Boundary. The body ends with the sentence "Paid and outward runs follow the paid-run consent rule." Do not restate that rule's numbers. The template is [skill-template.md](skill-template.md).
+
+## Worked example
+
+The user wants a skill named `pricing-objections` that files a pricing objection on the closest wiki page and does not send email.
+
+The catalog has no `skills.write` capability. `skills.architect.job_snapshot_get`, `skills.architect.run_steps_inspect`, `skills.architect.turn_trace_get`, and `skills.architect.turn_traces_list` are run traces. They do not save a playbook. The doors that find and read a playbook are skills_list and skills_get. The writes are knowledge documents. `tools_get` each one before the call.
+
+1. skills_list with query `pricing`. If a skill already covers the need, add a section to it with `knowledge.brain.knowledge.save_revision` instead of creating one.
+2. skills_list with the query omitted. Read the skills root folder id from that catalog.
+3. `knowledge.brain.context.create_folder` with that parent and title `pricing-objections`. The receipt's folder id is the parent for the page. Repeating the same idempotency key returns the original folder.
+4. `knowledge.brain.knowledge.create_document` with `parent_folder_id` set to that folder, `title` `SKILL.md`, and `content` the full Markdown from the template: frontmatter `name` equal to `pricing-objections`, Boundary before the practice, and the paid-run consent rule sentence. A `context_conflict` means a live document already has that title. Nothing was written. Read it and use `knowledge.brain.knowledge.save_revision` with `document_id`, the full `content`, and `expected_document_revision` equal to `document.revision_number` from `knowledge.brain.context.get`.
+5. skills_get with id `pricing-objections`. The skill exists only when that read returns the Markdown and a revision. Report the path and the revision. If skills_get says not found, it was not created.
+
+A later edit reads skills_get, then `knowledge.brain.context.get`, then saves on that `document.revision_number`. A conflict means someone else saved first. Re-read, merge, and save again. Do not resend the stale body.
 
 ## Guardrails
 

@@ -45,7 +45,7 @@ Drafting needs no review, approval or human step. Match the stored voice. No em 
 
 Before scheduling, resolve every @mention for each channel. People and companies can be mentioned on LinkedIn and X. Never send unresolved mention text to a provider. It publishes broken public text and cannot be edited back on every channel.
 
-Read the channel registry before writing. Per-channel max_content_length is registry data. Never assume a limit. X length is weighted (a link counts 23) and each thread post is checked on its own. Reddit is draft only: write the title, body and subreddits; the user posts it.
+Read the channel registry before writing. Per-channel max_content_length is registry data. Never assume a limit. X length is weighted (a link counts 23) and each thread post is checked on its own. Reddit is a write-enabled channel on `social.content.artifact_create`. Put `reddit_title` and `subreddits` on the draft. A connected Reddit account publishes on the queue below. `social.sender_profile_reddit_upsert` stores a label only. It does not connect an account and it does not grant a post.
 
 For LinkedIn, the last line must open with an ask verb or be a question addressed to the reader. Refuse the write with `linkedin_cta_required` when the close fails the rule.
 
@@ -53,7 +53,7 @@ For LinkedIn, the last line must open with an ask verb or be a question addresse
 
 To attach a file, request the post's `social.content.media_upload_url`, PUT the raw bytes to the returned `upload_url` with the returned headers, then call `social.content.media_uploaded`. If that returns a queued run, read the result with `runs_get` before telling the user anything. A file already at a public https URL in workspace storage can be attached by putting `{type, url, name, alt_text}` in the post's media array.
 
-A failed upload states its reason. Fix the cause and request a new upload URL. Never tell the user a format is unsupported unless the limits below say so, and never swap one media type for another (for example a video in place of a GIF) without asking.
+A failed upload states its reason. Fix the cause and request a new upload URL. Never tell the user a format is unsupported unless the limits below say so, and never swap one media type for another (for example a video in place of a GIF) without asking. If you cannot PUT the bytes, `social.content.media_import` downloads a public https file URL, up to 50 MB, and attaches it after the same validation. A page URL is not a file URL.
 
 Media is replace-the-set on update: send the complete array each time. Array order is display order.
 
@@ -65,7 +65,7 @@ Per channel:
 - YouTube: exactly 1 video.
 - Facebook: images or video, up to 10.
 - Threads: images or video, up to 20.
-- Reddit: draft only.
+- Reddit: 1 image or 1 video. Title and subreddits still live on `platform_payloads.reddit`. Publishing needs a connected Reddit account, not a sender-profile label.
 
 Read `social.channels_list` for current limits.
 
@@ -81,9 +81,48 @@ Amplification is a standing workspace policy that engages from other people's re
 
 These automations run only when the post publishes. Setting them up sends nothing.
 
+## Comments and generation
+
+Use social.comments.queue_list and social.comments.get to read owned-post comments and freshness. Use social.comments.update for local drafts or notes and social.comments.resolve for local triage. For a public reply, social.comments.reply freezes a preview; review its text and use social.comments.approve with its returned action_id and content_hash and approved true. An edit requires a new preview. If the outcome is effect_unknown, inspect the live thread and receipt before further action; never resend blindly. social.comments.x_refresh fetches X replies on demand and consumes provider reads.
+
+For optional copy assistance, social.tools.linkedin_post_generate, social.tools.linkedin_hook_generate and social.tools.linkedin_headline_generate serve LinkedIn; social.tools.x_post_generate, social.tools.x_hook_generate and social.tools.x_bio_generate serve X. Inspect each schema and cost, ground and review its output, then save the chosen copy as an artifact. Generation alone does not prove publication.
+
+## Pick the path
+
+| Ask | Call | Not this |
+| --- | --- | --- |
+| A time, media, a thread, a poll, Reddit, or more than one channel | `social.content.artifact_create`, then `social.content.schedule`, `social.content.approve`, then `social.content.delivery_publish` | `social.posts.create` |
+| LinkedIn text now, no media, no time, one account | `social.posts.create` preview, then live with `mode` `live` and `approved` true | A second artifact for the same text |
+| Reply on a comment already in the owned queue | `social.comments.reply`, then `social.comments.approve` | A second approve after `effect_unknown` |
+| A new public comment on a live post | `social.posts.comment_publish` under the paid-run consent rule | The owned-queue preview |
+
+Worked params and readbacks are in [lifecycle.md](lifecycle.md).
+
+## Confirm first
+
+1. Free reads: `social.channels_list`, `social.content.artifact_get`, `social.content.preview`.
+2. `social.content.artifact_create` saves a draft and publishes nothing.
+3. `social.content.schedule` arms one delivery per channel and account. It does not call a provider. An unapproved draft returns `approval_required` true. Later dispatch refuses with `content_delivery_publish_authorization_required` until `social.content.approve` binds the current version.
+4. `social.content.approve` stamps `approved_version`. It publishes nothing. It blocks an empty body, LinkedIn text above 3,000 characters, unresolved media, and unresolved mentions.
+5. `social.content.delivery_publish` dry run returns `provider_payload` and `approved_publish_hash`. No provider call.
+6. Live `social.content.delivery_publish` sends that hash. The post is public when the provider commits. `replayed` true means it was already published. `reconciliation_required` true means stop and read the delivery. Do not call `social.content.post_retry` until the delivery is `failed`.
+7. A request to publish now still walks steps 2 to 6 when `social.posts.create` cannot carry the post. When the person already asked to publish that exact text, the dry run is the confirm step. Do not add a second question. If the server refuses and names an approval it needs (a governed workspace's reviewer pipeline, or consent for a paid or recurring run), get that approval from the person; never invent one.
+
+A refused schedule stays on the same artifact. 409 `account_selection_required` names the accounts: bind one with `social.content.artifact_update`, then schedule again. 400 `social_account_binding_required` means no channel or no account. `provider_contract_not_found` means the LinkedIn schedule wrote no delivery. `channel_media_required` and `channel_media_kind_unsupported` mean fix the media, then schedule again. Do not open a second artifact. `social.content.approve` also refuses a stored unresolved media reference, so finish `social.content.media_uploaded` (and `runs_get` when that call queued) before approve.
+
+## Creator posts
+
+A creator program is not this queue. `social.ugc_programs.create` makes a program and leaves amplification off. `social.ugc_creators.invite` is link-only unless communication consent and the frozen preview token are both present. `social.ugc_posts.enroll` copies a creator draft in as unapproved and never publishes. `social.ugc_posts.approve` binds the current `enrollment_version`, and only the creator or a delegate the creator granted may approve. Do not schedule that enrollment with `social.content.schedule`.
+
 ## Schedule and publish
 
-Scheduling is separate from drafting: schedule only when the user asks. Publishing is outward delivery. Decide by judgment whether to confirm first; when the user already asked to publish, publish. If the server refuses and names an approval it needs (a governed workspace's reviewer pipeline, or consent for a paid or recurring run), get that approval from the person; never invent one.
+Scheduling is separate from drafting: schedule only when the user asks. Publishing is outward delivery. Follow the confirm-first ladder above.
+
+Approval has separate axes: the user authorizes the intended outward effect, the current content version may need workspace approval, the provider or account must be ready, and paid or recurring work follows the paid-run consent rule. Review exact channels, accounts, time, copy and any spending ceiling. A discussion or editorial review alone does not authorize dispatch. A content change can invalidate version-bound approval; read current state and obtain any required new approval.
+
+If a publish outcome is unknown, read the post and its delivery state with social.content.artifact_get and inspect the provider receipt and run evidence before any retry. A reconciling delivery is not proof of failure. Never republish blindly; if the provider outcome cannot be established, report the unresolved state and preserve the delivery for reconciliation.
+
+Worked example: for a requested LinkedIn draft and scheduled slot, inspect the schemas, then save the supplied body and channel with social.content.artifact_create using {content: "Onboarding taught us to listen. What would you change?", channels: ["linkedin"]}. Use its returned artifact ID and revision, resolve the account and timezone, and call social.content.schedule with {artifact_id: returned ID, expected_revision: returned revision, scheduled_at: requested ISO timestamp}. Read social.content.artifact_get with {artifact_id: returned ID}; verify each delivery, scheduled_at, account and current approval state. If approval is required, follow the returned gate before dispatch; a scheduled result is not a published receipt.
 
 When the user states a cadence, map every draft in the plan to a concrete slot and schedule all in one batch. If post count and slots conflict, ask before scheduling. Read back every scheduled post and report its date and time.
 

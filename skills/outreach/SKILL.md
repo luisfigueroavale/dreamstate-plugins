@@ -34,8 +34,8 @@ When user says delete, delete permanently. Show impact first unless user already
 
 ## Copy
 
-- Every message carries the signal that found this lead, read from the worksheet column that holds it. Bring a signal that lives on a linked row onto the enrolled worksheet with a lookup column. When no column holds a usable signal, add one that writes it first.
-- The signal is about them, never about how you found them.
+- Every message carries one public signal for this lead, read from the worksheet column that holds it. Public signals are hiring, funding, a public post, and a job change. Bring a public signal that lives on a linked row onto the enrolled worksheet with a lookup column. When no column holds a usable public signal, add one that writes it first.
+- Never name a private signal, and never say how the lead was found. Private signals are a profile view, a website visit, and private engagement.
 - Fixed scaffold, small slots: greeting, pitch, call to action and sign-off are the same for everyone; only the slots change. Write the scaffold so every value reads correctly, and never invent a fact to fill a slot.
 - Greet by first name. The enrolled worksheet's columns are the variables, so add a first name column when it is missing.
 - Bind or create sequence from its source worksheet before writing copy that uses person tokens like {{first_name}}.
@@ -60,13 +60,26 @@ When the user asks to enroll a list:
 
 - Read each step's schema for what it already does, such as connecting or waiting before it sends, and never add a separate step for what it handles.
 - Validate after every change. Never call a sequence ready until validation is clean and the saved sequence shows every requested step.
+- Branches, send windows, timezones, and how to change a running sequence: [journeys.md](journeys.md).
+- A human call, and a workspace task that can also write a HubSpot task: [calls-and-crm-tasks.md](calls-and-crm-tasks.md). There is no standalone `crm_task` step.
+- Pushing reviewed contacts into Instantly, Lemlist, or Smartlead: [external-campaigns.md](external-campaigns.md). No sequence capability does that push.
+
+## InMail
+
+`send_inmail` messages someone the sender is not connected to and spends a paid credit, so plan it deliberately.
+
+- Use it after a connection request that went unanswered (a wait step, then `send_inmail`), or for a top-graded account worth the credit. Never as the opening of a bulk sequence.
+- One InMail per person. Never to a first-degree connection: the step then sends a plain direct message instead, so write the body so it reads well as either.
+- A subject is required: short and specific to the person, never a pitch headline. Keep the body under about 400 characters, one idea, one question.
+- Before planning volume, read the sender's seat and credits with `senders.identities.inmail_balance_get` and its InMail per day with `senders.linkedin_accounts.settings_get`. A free or unknown seat has no InMail, and a daily target of 0 means the owner has not allowed it. Say what is missing and set the target with `senders.linkedin_accounts.settings_update` only when the user asks.
+- A step held for `inmail_not_in_plan`, `inmail_daily_cap_zero` or `out_of_inmail_credits` is waiting on one of those, not failing. Report the reason; do not enroll more leads into InMail steps meanwhile.
 
 ## Audience
 
 - The workbook is the audience. Filter enrollment on qualified rows (every Required criterion column passes) and on the columns the copy needs being set. Match role families, never one exact title. Without criterion columns, add them from the ideal customer profile, run them, read them, then filter.
 - A sequence can have unlimited ordered workbook audiences. Add the first workbook and worksheet, then set that audience's enrollment column filter, email and LinkedIn URL identity columns, daily enrollment cap, and priority sort. Add another workbook only when it needs its own audience settings. Earlier audience wins when same person appears in more than one audience.
 - Keep filters, identity mapping, cap, and priority inside each audience. Never apply one global filter or sort across several workbooks. Use a workflow source only when entry needs logic a workbook audience cannot express.
-- When several people from one company are enrolled, turn on company pause on reply.
+- When several people from one company are enrolled, turn on company pause on reply (`message_policy.company_reply_pause`). A human reply then holds that company's other leads in this sequence. A bounce or an auto-reply does not. A meeting booked is a separate hold, not the same switch. Read holds with `sequence.sequences.paused_companies_list`. Resume one company with `sequence.sequences.resume_company` only after a dry run, because a live resume re-arms due steps. Read the saved flag back with `workflow.automations.get`. A company do-not-contact entry is permanent. A company pause is not.
 
 ## Exclusions for one sequence
 
@@ -88,7 +101,7 @@ Unsubscribed, bounced, and manual list entries have no exclusion rule id and can
 ## State
 
 - Building never waits on connections or rows. Build, preview, validate and bind anyway, then say what to connect or what will make rows land.
-- Publishing and enrolling never send. After enrolling, publish if readiness passes and leave it unstarted unless the user explicitly says start. An unstarted published sequence is distinct from a manual pause. Staged contacts on an unstarted sequence are success. `max_live_sends` is a param of the external-send sequence capabilities (activating an audience, resuming a sequence, and the rest of that family), sent inside `params`, not a gating input of `tools_run`. Sending follows the paid-run consent rule.
+- Publishing and enrolling never send. After enrolling, publish if readiness passes and leave it unstarted unless the user explicitly says start. An unstarted published sequence is distinct from a manual pause. Staged contacts on an unstarted sequence are success. `max_live_sends` is a param of the external-send sequence capabilities (activating an audience, resuming a sequence, and the rest of that family), sent inside `params`, not a gating input of `tools_run`. Fetch that capability's schema before the live call. When the fetched schema declares `max_live_sends`, a live start that sends email, WhatsApp, or a CRM task must include it, because those steps are unmetered and a credit ceiling cannot bound them. `sequence.sequences.start` declares only `sequence_id` and does not declare `max_live_sends`, so do not add the field on that call. `sequence.sequences.activate_audience` does declare it. When the schema declares it, set it to at least the dry run recipient count. A missing required ceiling returns `sequence_send_cap_required`. Sending follows the paid-run consent rule.
 - Drafted, validated, published, enrolled, started, delivered and replied are separate facts; report only what the last result proves. After an unknown outcome, read state before retrying, and never enroll or send twice.
 
 ## Done

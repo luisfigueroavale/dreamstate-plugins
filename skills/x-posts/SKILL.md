@@ -15,7 +15,42 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 
 Write for a feed that discards most posts in under two seconds. Every line earns the next: the hook earns post two, post two earns post three.
 
-Before drafting, check what has worked for this account on X (format, length, hook, posting hour) with `social.content.performance_query` (group by post format, published hour or weekday, and read engagement rate, which is likes, comments, reposts and saves over impressions for the same posts at the same age and is empty when impressions are not recorded), and treat a small sample as a hint.
+Before drafting, check what has worked for this account on X (format, length, hook, posting hour) with `social.content.performance_query` (group by post format, published hour or weekday, and read engagement rate, which is likes, comments, reposts and saves over impressions for the same posts at the same age and is empty when impressions are not recorded), and treat a small sample as a hint. Rows may include `insufficient_data`. The result may include `not_recorded` and `posts_without_metrics`. Those are not zeros. Compare this account's original posts only. A reply that starts with `@` is not a format test. Do not treat a LinkedIn winner as an X result.
+
+## Decide the idea
+
+Return PASS, REPAIR, or REJECT. REPAIR names the failed gate and the proof still needed. REJECT means the idea cannot be made honest. Compare ideas that pass, in pairs. Do not score them from 1 to 10. Offer 3 to 5 unless the brief already chose the angle. Do not stop a fully specified draft for a vote.
+
+1. A receipt the person or Company Context supplied.
+2. The author can stand behind a first-person claim. Another company's result is not "we achieved".
+3. Useful to the buyer named in Company Context.
+4. Specific: a period, a named event, a workflow, a company, or a before and after.
+5. Fits pillars when Company Context has them. Do not invent a pillar. One post, one claim.
+6. Public-safe: no invented metric, and no customer detail that is not cleared for public use.
+
+A number needs a definition, a unit, a period, a source, and a public-use status. Do not round up. Remove an uncleared number from the copy and name it beside the draft.
+
+Shortening a LinkedIn draft is not an X post. Rewrite from the same evidence: one claim, one receipt, one payoff for the reader. A thread only when the next posts add steps or evidence. Do not split a short thought to hit a post count. The opener must be a useful post even if nobody reads on.
+
+## Voice, hook family, skim
+
+The person's current wording wins. Read `social.brand_voice_get`. If X examples are missing, LinkedIn voice is provisional background: say so. If voice is empty, `knowledge.brain.context.search` then `knowledge.brain.context.get`. Missing voice does not block an edit of supplied copy. Never copy another author's slang or numbers.
+
+`social.content.artifact_list`, then `social.content.artifact_get` on the last two published original posts for this account. Name the hook pattern already used (bold claim, contrarian, stat, question, story, value promise) and pick a different one. The negation pivot ("It is not X. It is Y.") at most once. No transition questions ("The catch?"). No aphorism as the only close when the hook promised steps.
+
+Skim a thread as post 1, the first words of each later post, and the last post. If that skeleton drops the promise, cut or reorder. Do not pad.
+
+## Save and read back
+
+This skill writes the copy and can save the draft. Scheduling and publishing stay with social, which calls `social.content.schedule` and `social.content.delivery_publish` when the person asked to publish. `social.content.generate` spends credits. Use it only when the person asked for the paid generator, and then follow the paid-run consent rule.
+
+When this skill saves, call `social.content.artifact_create` once with `channels` `["x"]`, `status` `"draft"`, and `content` set to the first post. A thread also sets `platform_payloads.x.thread_data` to the full ordered list, first post included. The publisher posts `thread_data` and ignores `content`, so those two must still match on the first post. Per-post media goes in `platform_payloads.x.thread_media`, parallel to `thread_data`, not in top-level `media`. If the save says "For an X thread with per-post media, put media in thread_media, not in media.", move the media and update once.
+
+A poll is `platform_payloads.x.twitter_poll`: 2 to 4 `options`, each at most 25 characters, and `duration_minutes` from 5 to 10080. A poll cannot carry media. The refusal is "Provider polls and quote posts cannot be combined with media." A quote (`twitter_quote_tweet_id`) can carry media and cannot carry a poll. Alt text sits on the media item, describes what is in the image, and stays at or under 1000 characters. Over that, the refusal is "X alt text must be 1000 characters or fewer."
+
+If the save returns `channel_content_too_long`, the message names the limit and, for a thread, the post number. Split that post. Do not trust a raw JavaScript string length. Weighted length is the registry rule already in this skill.
+
+Read `social.content.artifact_get`. For a thread, `platform_payloads.x.thread_data` is the full order you wrote. A 404 means the id is not in this workspace. An edit uses `social.content.artifact_update` with `expected_revision` from `artifact.revision`. 409 `published_immutable` or 409 `stale_action` means stop and re-read. Do not open a second artifact. If social is already saving a multi-channel draft, return the X payload and do not create another artifact. If no account is bound, omit `account_ids`, set `allow_unbound_draft` to true, and say the account is missing.
 
 ## Single post or thread
 
@@ -77,6 +112,54 @@ Change what was asked and keep the rest verbatim. If a thread post runs long, sp
 
 ## Check it works
 
-Read the saved draft back: the hook alone justifies post two, each post is under the account's limit, each thread post stands alone, every number traces to something real, and nothing contains an em dash.
+Read the saved draft back: the hook alone justifies post two, each post is under the account's limit, each thread post stands alone, every number traces to something real, the hook family differs from the last two posts, and nothing contains an em dash. If you saved, `social.content.artifact_get` matches the text you sent.
+
+## Worked example
+
+Supplied fact: the same opener booked 4 meetings between 12 and 22 March when it named the missed reply instead of the product. No other number exists. The person asked to "turn the LinkedIn post into X" by shortening it.
+
+Bad draft (a shortened LinkedIn post):
+
+```
+It's not the copy. It's the system. Distribution is the moat. We booked 4 meetings. Thoughts?
+```
+
+Fixed post:
+
+```
+Named the missed reply instead of the product.
+
+That opener booked 4 meetings from 12 to 22 March.
+```
+
+The bad draft keeps the LinkedIn slogan, the negation pivot, and a stock question, and it would still be one LinkedIn paragraph with the line breaks removed. The fixed post is one claim and one receipt. It is under 280 weighted characters. It does not need a thread. If the dates had not been supplied, the verdict is REPAIR and the number stays out.
+
+Save: `social.content.artifact_create` with `content` set to the fixed post, `channels` `["x"]`, `status` `"draft"`. Read back with `social.content.artifact_get`. Do not send `thread_data` for this single post.
+
+## Poll example
+
+The person asked for a one-day poll, two options, no image. Options stay at or under 25 characters.
+
+```json
+{
+  "content": "Which opener should we keep?",
+  "channels": ["x"],
+  "status": "draft",
+  "platform_payloads": {
+    "x": {
+      "twitter_poll": {
+        "options": ["Missed reply", "Product name"],
+        "duration_minutes": 1440
+      }
+    }
+  }
+}
+```
+
+`social.content.artifact_get` must show both options and `duration_minutes` 1440, and no media. If create returns "Provider polls and quote posts cannot be combined with media.", remove the media and save once. Do not convert the poll into `twitter_quote_tweet_id`.
+
+## Refused save and failed readback
+
+`channel_content_too_long` names the limit and, for a thread, the post number. Split that post and update the same artifact. A 404 on `social.content.artifact_get` means list with `social.content.artifact_list` and do not create a duplicate. 409 `published_immutable` or 409 `stale_action` means stop and re-read. If the stored `thread_data` or poll options differ from what you sent, report the stored payload and patch once with `expected_revision`.
 
 Paid and outward runs follow the paid-run consent rule.

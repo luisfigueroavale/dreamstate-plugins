@@ -14,6 +14,8 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 - Records and pipeline state: [`crm`].
 - The `unibox` pack lists the tools and their exact inputs.
 
+A single direct email outside a thread uses `sequence.outreach.email_send_one_off`. A new LinkedIn conversation belongs to [`outreach`].
+
 A reply is the whole point of outreach. Answer what the person actually said, in the conversation they said it in, and never restart the pitch.
 
 ## Backing packs
@@ -40,7 +42,40 @@ An existing conversation is answered in that conversation. Before any reply goes
 6. **Show, then send.** Present channel, account, thread, recipient and final copy. Send when the user confirms or has already asked you to send this reply.
 7. **Read back.** Confirm the message appears in the conversation before reporting it sent.
 
-Search the inbox tool for the task. The search returns runnable schemas for its top hits; read any other ids together in one tools_get, then run.
+## Routing and evidence
+
+Use `unibox.inbox.unified_list` for a bounded conversation slice, `unibox.inbox.messages_query` for stored message search, and `unibox.inbox.conversation_get` for the exact account-scoped thread. Page older messages. Counts describe the authorized filters, not necessarily the entire mailbox. Triage status expresses sales intent: interested can include a thank-you, and a new reply reads neutral until analyzed. `unibox.inbox.analyze` can cost credits; preview its quote and choose the mailbox scope before running it. Do not mistake neutral for lack of interest. A reply raises the record's CRM signal level; `crm.leads.today_list` helps find today's leads.
+
+| Latest message | Decision |
+|---|---|
+| A real question, objection, referral or interest | Answer the specific point and offer one appropriate next step. |
+| A request to revisit later | Agree on a follow-up date; send a booking link only when asked. |
+| A vendor pitching you, a thank-you, a reaction or "will check it out" | Usually no reply. Review the context before closing. |
+| A decline, unsubscribe or out-of-office | Do not pitch; confirm suppression when applicable and defer an out-of-office. |
+| A partner or agency pitch that merits closure | Give a brief, courteous closing line rather than a demo pitch. |
+
+For a thread delayed three or more days, acknowledge the delay. Keep short direct-message drafts under 240 characters where practical, with one next step and no sign-off. Avoid the default demo closer, stock closing questions, feature dumps and references to private profile views. Never invent a fact.
+
+Use `unibox.inbox.reply_draft_edit` to save a draft and `unibox.context.thread_reply_send` to reply in the existing thread. Read the exact schemas with `tools_get`. Preview the send, show the exact content and destination, and follow the paid-run consent rule, including any applicable approval and ceilings. Start with one reviewed reply before any broader batch. Re-read the thread immediately before sending; a new inbound invalidates the draft.
+
+Triage, tags, and archive are separate from the reply itself. State the count before a bulk change.
+
+- Triage a reviewed set with `unibox.conversations_bulk_triage`. Preview in dry run. Pass `conversation_ids` (at most 100 exact account-scoped ids) and one action. `reply_label_set` plus `label` (`interested`, `question`, `objection`, `not_interested`, `ooo`, `vendor_pitch`, `closed`, or `unclear`) sets the label on each conversation's latest inbound reply. `unibox.inbox.analyze` can persist a classify-only triage and may cost credits, so preview its quote first. Classification in this skill is still a reading of the words, not a keyword match.
+- Tags on one conversation use `workspace.tags.list` with `object_type` `conversation`, then `workspace.tags.attach_delta` with `object_type` `conversation`, `object_id`, and `add` or `remove`. `workspace.tags.attach` replaces the whole set. Inbox labels on a set use the same bulk triage call with `labels_add` or `labels_remove` and `labels`. Those labels are not workspace tags.
+- Archive a conversation with `unibox.conversations_bulk_triage` action `archive_set` and `archived` true. That is not `unibox.inbox.status_label_archive`, which retires one custom status label and refuses `system_label` and `label_in_use`. Set one conversation's status with `unibox.inbox.conversation_status_apply` (`conversation_id`, `label_key`) after `unibox.inbox.status_labels_list`.
+
+## Recovery
+
+Walk this ladder in order. Never mint a new request id while an earlier send might have landed.
+
+1. Refused send. The provider was not contacted. Read the refusal. Fix the missing approval, the stale `expected_revision`, or the ceiling, then send again with the same `client_request_id` only when the refusal says nothing was delivered.
+2. Unknown outcome. Do not send again. Read `unibox.inbox.conversation_get`. If the outbound message is already in the thread, stop.
+3. Persisted draft. `unibox.inbox.reply_draft_edit` saves a draft and does not send. Read it back with `unibox.inbox.reply_drafts_list` filtered to that `conversation_id`. A send receipt with `persisted` true has a run. `persisted` false returns `not_found` from `runs.get`.
+4. `runs.get`. When the receipt has `run_id` and `persisted` true, read `runs.get` and reconcile that run. `not_found` is not proof the message is absent if the conversation already shows it.
+
+## Worked example
+
+An email says, "Interested, but next month is better." Read `unibox.inbox.conversation_get` with `{"conversation_id":"email:11111111-1111-4111-8111-111111111111:thread-1"}` and confirm the latest inbound and stopped sequence. Draft: "Happy to reconnect next month. Would December 10 work for a follow-up?" Preview `unibox.context.thread_reply_send` in `dry_run` mode with `params` containing `conversation_id`, `content: {"body":"Happy to reconnect next month. Would December 10 work for a follow-up?","attachments":[],"voice":null}`, and a stable UUID `client_request_id`. Show the destination and copy, then send only when authorized, using the same operation identity. Read the conversation again and report the stored message or the unresolved outcome. Do not add a booking link unless requested.
 
 ## Guardrails
 

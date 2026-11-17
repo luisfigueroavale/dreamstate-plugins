@@ -4,7 +4,7 @@
 
 An article has an article id and a linked content-artifact id. Article reads, updates, delivery creation, duplication, and archive use the article id. Scheduling, unscheduling, editorial review, optional workspace review records, replacement, and delete-and-republish proposals use the linked artifact id. Read the article first and take both identities from the response. Never infer that two operations accept the same id because they act on the same piece of content.
 
-For every call, search the content catalogue for the intended outcome and read its exact input schema. The schema, not this prose, decides which id and fields the operation accepts.
+Named calls: `social.content.article_create` (empty draft, never schedules), `social.content.article_create_schedule` (`scheduled_date` null), `social.content.article_get`, `social.content.article_update`, `social.content.article_deliveries_list`, `social.content.destinations_list`, `social.content.destination_test`, `social.content.article_delivery_create`, `social.content.delivery_publish`, `social.content.article_delivery_reschedule`, `social.content.article_delivery_cancel`, `social.content.schedule` and `social.content.unschedule` on the linked artifact id only. For every call, read that capability's exact input schema. The schema decides which id and fields the operation accepts.
 
 ## Platform values differ by family
 
