@@ -12,7 +12,7 @@ Run this through the Dreamstate MCP tools: `packs_get` for the pack's capabiliti
 - Owns: explaining cell values, failed runs, and unsent work, including why a sequence or a lead has not sent.
 - Building or editing a sequence: [`outreach`].
 - Sources and columns: [`list-building`]. Reversible worksheet fixes: [`worksheet-tidy`].
-- Building and running automations: [`workflows`].
+- Building and running automations: [`workflows`]. Reporting a product problem: [`feedback`].
 - The `workspace` pack lists the tools and their exact inputs.
 
 Good diagnosis answers one question with the least evidence that settles it. Pick the question, follow the object to its run, and separate "still working" from "broken".

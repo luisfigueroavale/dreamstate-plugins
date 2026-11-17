@@ -9,7 +9,7 @@ Dreamstate is reached through its MCP server. Its tool list is the door, not the
 
 Prefer the narrower `dreamstate:*` skill for the job when one fits; `skills_get` returns the workspace's current copy of any skill.
 
-Skills (skills_list for details): knowledge, list-building, outreach, social, linkedin-posts, x-posts, instagram-posts, tiktok-posts, youtube-posts, facebook-posts, reddit-posts, visibility, workflows, writing, inbox-replies, plays, diagnostics, worksheet-tidy, crm, linkedin-warm-signals, skill-authoring, performance, setup, enrichment, gtm-consultant, deliverability, collaboration, custom-http, clay-migration
+Skills (skills_list for details): knowledge, list-building, outreach, social, linkedin-posts, x-posts, instagram-posts, tiktok-posts, youtube-posts, facebook-posts, reddit-posts, visibility, workflows, writing, inbox-replies, plays, diagnostics, feedback, worksheet-tidy, crm, linkedin-warm-signals, skill-authoring, performance, setup, enrichment, gtm-consultant, deliverability, collaboration, custom-http, clay-migration
 
 Named tools such as `context_resolve`, `crm_search` and `tasks_create` each run one capability under the same `tools_run` rules.
 
@@ -21,7 +21,7 @@ Named tools such as `context_resolve`, `crm_search` and `tasks_create` each run 
 6. `tools_run` runs it with `capability_id` and `params`. The gating inputs (`mode`, `max_credits`, `idempotency_key`, `quote_hash`, `approved`) go on the run call itself, never inside `params`. `max_rows` is a param of `tables.columns.run` and `tables.table_sources.run`, not of `tools_run`. `max_live_sends` goes inside `params` only when the fetched capability schema declares it (for example, a one-contact workflow run). Sequence start, resume, launch and enrollment do not accept it; they have no lifetime send ceiling.
 7. `runs_get` follows long work; `runs_events` and `runs_list` read more of it and `runs_cancel` stops a run.
 
-Lists, finds, enrichments and signals happen only inside a workbook worksheet. Report only what tools returned.
+Lists, finds, enrichments and signals happen only inside a workbook worksheet. Before building a list or workbook, or adding rows to one: skills_get list-building. Rows come from sources, imports or other worksheets; web facts come from research columns. Report only what tools returned.
 
 ## Paid and outward-facing runs
 

@@ -8,7 +8,8 @@ A column answers one question about a row: what value it holds, what produces it
 | --- | --- | --- |
 | Show or reshape a value already on the row | A formula. It evaluates on read and spends nothing. | An AI column, which can invent a missing fact. |
 | Judge text the row already holds | `column.ai` for an open answer, or `column.ai_fit_score` for a 0 to 100 fit score. An AI column has no web access. Asked to check a website, it answers from the row and can invent. | A research column, which is the paid web read. |
-| A fact that lives on the web, or on a page the row links | `column.research`. Output is fixed `{status, answer, evidence}`. `found` false, or an empty answer, is unknown, not a contradiction. | An AI column. |
+| A fact that lives on the web, or on a page the row links | `column.research`. Output is fixed `{status, answer, evidence}`. `found` false, or an empty answer, is unknown, not a contradiction. For a multi-step look across several pages, `column.web_agent`. | An AI column, or a value you found elsewhere and typed in. |
+| A pass or fail criterion over a research or AI answer | A formula over that column's output, or a run condition on it. | A text column filled by hand. |
 | Work email, phone, LinkedIn URL, company data, or verification | The enrichment skill. Resolve the definition with `tables.enrichment.catalog` and `tables.enrichment.presets_list`. | A prompt that asks a model to guess an email. |
 | One provider operation the catalog already lists | The definition `tables.executable_definitions.list_resolved` returns. Copy its add payload. | A hand-written provider name. |
 

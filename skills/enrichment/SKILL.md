@@ -40,6 +40,8 @@ Free reads, in this order, before any column is added:
 | Verification of addresses you already have | `tables.contacts.verify_email` | Use it to find addresses. It only grades the ones you pass |
 | One attribute queued on one record, no definition binding | `crm.record_enrichment.create`, then `crm.record_enrichment.get`, then `crm.records.get` | Use it when `crm.records.tool_run` can take the binding. There is no batch form |
 
+For work email, phone and any other field a waterfall covers, check for the waterfall first and prefer it over one of its single-provider steps. A single provider is fine when you or the user have a reason; say the reason.
+
 `tables.enrichment.apply_default_cascade` writes the server default provider waterfall onto one manual or enrichment column. The order is the billing lanes of the chosen preset when those lanes are legal waterfall steps. It is idempotent when the column already has that order. It calls no provider.
 
 Enrich only rows that already survive Required criteria. `tables.rows.dedupe` finds duplicate pairs on a normalized email, company domain, or LinkedIn URL, or on a fuzzy person name plus company. The preview writes nothing. Approving its preview hash fills blank cells on the kept row and removes the duplicate only when both rows sit on this worksheet. Never pay twice for a duplicate or for a row you will discard.

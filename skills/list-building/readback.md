@@ -8,7 +8,7 @@ A count that is still being computed is unknown, not zero, and a completion clai
 
 Every cell says where its value came from and what state it is in. Empty and failed are different answers and are reported separately; neither is zero. A missing provider answer is unknown, and so is a Required column with no data. Neither is false, and neither may be filled in from a similar row.
 
-Let columns settle cells. Setting cell values by hand bypasses the evidence trail and is worth avoiding when a column run can do it.
+Let columns settle cells. A hand-set cell has no evidence trail: use it only for a value the user gave you, never for research or a qualification verdict.
 
 ## After a failed or partial run
 

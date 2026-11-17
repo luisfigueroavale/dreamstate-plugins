@@ -81,10 +81,10 @@ Scoring is deterministic and costs zero credits.
 
 Land about ten people the user could contact this week, warm before cold:
 
-1. Warm rungs first, in this order, from the first-win bundle: an active relationship or open deal, an interested reply nobody answered, recent CRM evidence, LinkedIn engagement, an existing qualified worksheet row. Never claim a warm rung without returned evidence.
+1. Warm rungs first, in this order, from the first-win bundle: an active relationship or open deal, an interested reply nobody answered, recent CRM evidence, LinkedIn engagement, an existing qualified worksheet row. Never claim a warm rung without returned evidence. Reuse rows that already exist where they are: a filtered view on their worksheet, or `tables.rows.send` to copy chosen rows. Never retype them into a new sheet.
 2. Install the list blueprint the bundle recommends (`workspace.blueprints.describe`, then `workspace.blueprints.apply`, then `workspace.blueprints.configure` for its source inputs), or reuse a fitting worksheet.
 3. Only when warm rows cannot fill the set, run the free preview `tables.sourcing.preview` on the scarcest Ideal Customer criterion. Inspect filter coverage: only applied Required filters qualify a row; unverified or unsupported ones mean possible fit. Then run at most about ten rows from that preview with `tables.table_sources.run` under the paid-run consent rule.
-4. Add the Required and Nice to have criterion columns, the evidence column and a first-message draft column with `tables.columns.add`, price them, then run them on the sample with `tables.columns.run`.
+4. Add the Required and Nice to have criterion columns, the evidence column and a first-message draft column with `tables.columns.add`, price them, then run them on the sample with `tables.columns.run`. Criteria and evidence that need the web are `column.research` or `column.web_agent` columns; never type a verdict or evidence into a cell.
 5. Read the rows back. Every row shows its warmth rung, one evidence reason, one fit reason and a drafted first message. If fewer than half of cold rows look right, change the source filter once and preview again; never add columns to hide a poor source.
 
 No contact-data lookups yet: they come after the user agrees these are the right people.

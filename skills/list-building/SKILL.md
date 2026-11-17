@@ -27,6 +27,7 @@ A list is worth contacting when every row would recognise itself in the reason y
 | People list: a role, a place, or people at named companies | A people source only when that definition declares every Required company fact. Otherwise companies first, then `tables.worksheets.create_fan_out_destination` | Same preview, on the source you will actually attach |
 | Signal list: hiring, funding, post engagers, followers, profile viewers, X posts | One worksheet source. Capture stays here. A score or today's leads belong to crm. Auto-enroll belongs to outreach | Exact blueprint via `workspace.blueprints.recommend`, or the ready definition from `tables.executable_definitions.list_resolved` |
 | Import: the user already has the rows | CSV or a URL of rows. Not a search | `tables.table_sources.csv_import_prepare` or `tables.table_sources.url_import_preview` |
+| The rows are already on another worksheet | That worksheet. Never retype them | A filtered view as the sequence audience, or `tables.rows.send` to copy chosen rows |
 
 Do not use this skill to enrich rows you already have ([`enrichment`]), to send ([`outreach`]), or to merge records (crm). A signal list is not a cold people search. An import is not a preview of a provider.
 
@@ -45,6 +46,13 @@ Sample size:
 - The user named no target. The first paid sample is about 25. Read every row. Ask how far to grow only after that sample settles.
 - Under about 30 percent qualified, name the Required criterion that fails most and propose one change. Under about 10 percent, change the source.
 - A preview that returns nothing: loosen one filter and preview again. If it is still empty, the source cannot express the request.
+
+## Every value has a producer
+
+- Rows come from a source, an import, or another worksheet. Typed rows (`tables.rows.create_many`, `tables.rows.upsert`, `first_worksheet.rows`) are only for a short list the user handed you; pass `row_origin: "user_supplied"` when you write them. A file or a link of rows is an import, not typing.
+- Rows already on another worksheet are never retyped. To send a subset, filter a view on that worksheet and use the view as the sequence audience. To copy chosen rows onto another worksheet, use `tables.rows.send` with `row_ids` or `filters`. To land people from company rows, fan out with `tables.worksheets.create_fan_out_destination`.
+- A fact that needs web evidence (who owns the company, whether it is independent, where it operates, what it sells) is a `column.research` or `column.web_agent` column with a run condition, and it cites its evidence. A pass or fail gate is a formula or a run condition over that column's output, never a text column you fill in. Research done outside Dreamstate is never pasted into cells.
+- When a source returns wrong rows (vendors, wrong region, wrong size), tighten that source first: location, industry, size, keywords, exclusions, then preview again. When the source cannot filter on the criterion, keep its rows and qualify them with a research or AI classification column that has a run condition. Never abandon the source for a hand-built sheet.
 
 ## Rows and qualified rows
 
@@ -110,7 +118,7 @@ Run conditions as filters:
 - Chain them: each paid column's condition includes every earlier Required criterion it depends on, so a disqualified row stops costing anything.
 - Exclude rows that failed, not rows that are still unsure, unless the column is only worth running on qualified rows (contact data, emails): those require a pass.
 - Order columns cheapest and most selective first: free formulas and exact fields, then enrichments, then judgment columns, then contact data.
-- When a waterfall returns the data a column needs (work email, phone, people at a company), add the waterfall, not one of its single-provider steps: it tries every enabled provider in workspace order and stops at the first verified match. Use a single provider only when the user names it or the waterfall cannot take the row's inputs, and say which.
+- Before adding a column for work email, phone or any other field, check whether a waterfall covers that field (`tables.enrichment.catalog`, `tables.enrichment.presets_list`) and prefer it: it tries every enabled provider in workspace order and stops at the first verified match. A single provider is fine when you or the user have a reason (a named provider, inputs the waterfall cannot take, a cost or coverage choice); say the reason.
 - Read the column back after saving and confirm the condition is there.
 - Research column shape, fixed output: read `column-authoring.md`, Research columns.
 
