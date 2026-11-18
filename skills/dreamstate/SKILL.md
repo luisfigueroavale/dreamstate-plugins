@@ -9,7 +9,7 @@ Dreamstate is reached through its MCP server. Its tool list is the door, not the
 
 Prefer the narrower `dreamstate:*` skill for the job when one fits; `skills_get` returns the workspace's current copy of any skill.
 
-Skills (skills_list for details): knowledge, list-building, outreach, social, linkedin-posts, x-posts, instagram-posts, tiktok-posts, youtube-posts, facebook-posts, reddit-posts, visibility, workflows, writing, inbox-replies, plays, diagnostics, feedback, worksheet-tidy, crm, linkedin-warm-signals, skill-authoring, performance, setup, enrichment, gtm-consultant, deliverability, collaboration, custom-http, clay-migration
+Skills (skills_list for details): knowledge, list-building, outreach, social, ugc, visual-design, linkedin-posts, x-posts, instagram-posts, tiktok-posts, youtube-posts, facebook-posts, reddit-posts, visibility, workflows, writing, inbox-replies, plays, diagnostics, feedback, worksheet-tidy, crm, linkedin-warm-signals, skill-authoring, performance, setup, enrichment, gtm-consultant, deliverability, collaboration, custom-http, clay-migration
 
 Named tools such as `context_resolve`, `crm_search` and `tasks_create` each run one capability under the same `tools_run` rules.
 
